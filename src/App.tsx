@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react'
 import Home from './pages/home/home'
+import Login from './pages/login/login'
 import News from './pages/news/news'
 
 function getCurrentPage() {
-  return window.location.hash.startsWith('#/noticias') ? 'news' : 'home'
+  if (window.location.hash.startsWith('#/noticias')) {
+    return 'news'
+  }
+
+  if (window.location.hash.startsWith('#/login')) {
+    return 'login'
+  }
+
+  return 'home'
 }
 
 function App() {
@@ -19,7 +28,15 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
-  return currentPage === 'news' ? <News /> : <Home />
+  if (currentPage === 'news') {
+    return <News />
+  }
+
+  if (currentPage === 'login') {
+    return <Login />
+  }
+
+  return <Home />
 }
 
 export default App
