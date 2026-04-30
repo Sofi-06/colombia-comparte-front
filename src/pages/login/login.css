@@ -7,6 +7,7 @@
     radial-gradient(circle at top left, rgba(233, 75, 140, 0.15), rgba(233, 75, 140, 0) 34%),
     radial-gradient(circle at 82% 20%, rgba(0, 153, 255, 0.12), rgba(0, 153, 255, 0) 26%),
     linear-gradient(90deg, #f5a3c7 0%, #ffc9a3 50%, #7b68be 100%);
+}
 
 .login-page__glow {
   position: absolute;
@@ -97,8 +98,8 @@
   align-items: center;
   padding: 0.38rem 0.82rem;
   border-radius: 999px;
-  background: rgba(98, 67, 140, 0.12);
-  color: #6a4f84;
+  background: rgba(98, 67, 140, 0.84);
+  color: #ffffff;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -181,19 +182,34 @@
   text-decoration: none;
 }
 
+.login-form__status {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.login-form__status--error {
+  color: #9a3f68;
+}
+
+.login-form__status--success {
+  color: #6d4f8f;
+}
+
 .login-form__submit {
   width: 100%;
   margin-top: 1.6rem;
   padding: 1rem 1.2rem;
   border: 0;
   border-radius: 999px;
-  background: #c97fa3;
+  background: #9f4a76;
   color: #ffffff;
   font: inherit;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 18px 30px rgba(201, 127, 163, 0.2);
+  box-shadow: 0 18px 30px rgba(159, 74, 118, 0.2);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -202,6 +218,13 @@
 .login-form__submit:hover {
   transform: translateY(-2px);
   box-shadow: 0 22px 36px rgba(58, 34, 84, 0.28);
+}
+
+.login-form__submit:disabled {
+  cursor: progress;
+  opacity: 0.82;
+  transform: none;
+  box-shadow: 0 18px 30px rgba(159, 74, 118, 0.14);
 }
 
 .login-card__footer {
@@ -289,8 +312,8 @@
   width: fit-content;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  background: rgba(241, 208, 255, 0.16);
-  color: #f1d6ff;
+  background: rgba(122, 80, 142, 0.42);
+  color: #ffffff;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;

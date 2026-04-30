@@ -2,13 +2,18 @@ import { useEffect, useState } from 'react'
 import Home from './pages/home/home'
 import Login from './pages/login/login'
 import News from './pages/news/news'
+import Superadmin from './pages/superadmin/superadmin'
 
 function getCurrentPage() {
-  if (window.location.hash.startsWith('#/noticias')) {
+  if (globalThis.location.hash.startsWith('#/superadmin')) {
+    return 'superadmin'
+  }
+
+  if (globalThis.location.hash.startsWith('#/noticias')) {
     return 'news'
   }
 
-  if (window.location.hash.startsWith('#/login')) {
+  if (globalThis.location.hash.startsWith('#/login')) {
     return 'login'
   }
 
@@ -23,13 +28,17 @@ function App() {
       setCurrentPage(getCurrentPage())
     }
 
-    window.addEventListener('hashchange', handleHashChange)
+    globalThis.addEventListener('hashchange', handleHashChange)
 
-    return () => window.removeEventListener('hashchange', handleHashChange)
+    return () => globalThis.removeEventListener('hashchange', handleHashChange)
   }, [])
 
   if (currentPage === 'news') {
     return <News />
+  }
+
+  if (currentPage === 'superadmin') {
+    return <Superadmin />
   }
 
   if (currentPage === 'login') {

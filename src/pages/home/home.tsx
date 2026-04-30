@@ -250,7 +250,7 @@ const newsItems: NewsItem[] = [
     tone: 'news-card--brand',
   },
   {
-    title: 'EDIFICA suma mentores para acompanar negocios emergentes',
+    title: 'EDIFICA suma mentores para acompañar negocios emergentes',
     excerpt:
       'Seguimos ampliando la red de especialistas que dona tiempo y experiencia para apoyar emprendedores.',
     date: '08 ABR',
@@ -277,29 +277,29 @@ function Home() {
   const impactRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
+    const intervalId = globalThis.setInterval(() => {
       setCurrentSlide((previousSlide) => (previousSlide + 1) % heroSlides.length)
     }, 6000)
 
-    return () => window.clearInterval(intervalId)
+    return () => globalThis.clearInterval(intervalId)
   }, [])
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
+    const intervalId = globalThis.setInterval(() => {
       setCurrentTestimonial(
         (previousTestimonial) => (previousTestimonial + 1) % testimonials.length,
       )
     }, 5200)
 
-    return () => window.clearInterval(intervalId)
+    return () => globalThis.clearInterval(intervalId)
   }, [])
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
+    const intervalId = globalThis.setInterval(() => {
       setCurrentNews((previousNews) => (previousNews + 1) % newsItems.length)
     }, 5400)
 
-    return () => window.clearInterval(intervalId)
+    return () => globalThis.clearInterval(intervalId)
   }, [])
 
   useEffect(() => {
@@ -342,7 +342,6 @@ function Home() {
 
   useEffect(() => {
     if (!impactVisible) {
-      setImpactCounts(impactStats.map(() => 0))
       return
     }
 
@@ -359,13 +358,13 @@ function Home() {
       )
 
       if (progress < 1) {
-        frameId = window.requestAnimationFrame(tick)
+        frameId = globalThis.requestAnimationFrame(tick)
       }
     }
 
-    frameId = window.requestAnimationFrame(tick)
+    frameId = globalThis.requestAnimationFrame(tick)
 
-    return () => window.cancelAnimationFrame(frameId)
+    return () => globalThis.cancelAnimationFrame(frameId)
   }, [impactVisible])
 
   const activeSlide = heroSlides[currentSlide]
