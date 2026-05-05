@@ -4,8 +4,16 @@ import Login from './pages/login/login'
 import News from './pages/news/news'
 import Superadmin from './pages/superadmin/superadmin'
 
+function hasActiveSession() {
+  return Boolean(globalThis.localStorage.getItem('authToken'))
+}
+
 function getCurrentPage() {
   if (globalThis.location.hash.startsWith('#/superadmin')) {
+    if (!hasActiveSession()) {
+      return 'login'
+    }
+
     return 'superadmin'
   }
 
@@ -25,6 +33,15 @@ function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
+      if (
+        globalThis.location.hash.startsWith('#/superadmin') &&
+        !hasActiveSession()
+      ) {
+        globalThis.location.replace('#/login')
+        setCurrentPage('login')
+        return
+      }
+
       setCurrentPage(getCurrentPage())
     }
 

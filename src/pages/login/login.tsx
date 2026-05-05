@@ -1,9 +1,14 @@
 import { type ChangeEvent, type SyntheticEvent, useState } from 'react'
 import { HiOutlineArrowLeft } from 'react-icons/hi'
 import { FiLock, FiMail } from 'react-icons/fi'
+import robotIllustration from '../../assets/robot.png'
 import './login.css'
 
 const LOGIN_URL = 'http://localhost:3001/api/auth/login'
+
+function getDashboardRouteByRole(role: string) {
+  return role.trim().toLowerCase() === 'superadmin' ? '#/superadmin' : '#/'
+}
 
 function Login() {
   const [username, setUsername] = useState('')
@@ -40,16 +45,23 @@ function Login() {
       }
 
       const token = payload?.token ?? payload?.accessToken ?? payload?.jwt
-      const authenticatedUsername = payload?.username ?? payload?.user?.username ?? username
+      const authenticatedUser = payload?.user ?? null
+      const authenticatedRole =
+        authenticatedUser?.rol ?? payload?.rol ?? payload?.role ?? ''
 
       if (token) {
         globalThis.localStorage.setItem('authToken', token)
       }
 
+      if (authenticatedUser) {
+        globalThis.localStorage.setItem('authUser', JSON.stringify(authenticatedUser))
+      } else {
+        globalThis.localStorage.removeItem('authUser')
+      }
+
       setStatusMessage('Sesion iniciada correctamente.')
       setStatusTone('success')
-      globalThis.location.hash =
-        authenticatedUsername.trim().toLowerCase() === 'superadmin' ? '#/superadmin' : '#/'
+      globalThis.location.hash = getDashboardRouteByRole(authenticatedRole)
     } catch {
       setStatusMessage('No se pudo conectar con el servidor. Intenta nuevamente.')
       setStatusTone('error')
@@ -69,6 +81,16 @@ function Login() {
       </a>
 
       <section className="login-shell" aria-labelledby="login-title">
+        <aside className="login-visual" aria-label="Ilustracion del robot">
+          <div className="login-visual__frame">
+            <img
+              className="login-visual__image"
+              src={robotIllustration}
+              alt="Robot ilustrado de la pantalla de inicio de sesion"
+            />
+          </div>
+        </aside>
+
         <article className="login-card">
           <div className="login-card__content">
             <div className="login-card__copy">
@@ -76,7 +98,7 @@ function Login() {
                 Inicia Sesión
               </h1>
               <p className="login-card__text">
-                Entra a tu espacio para seguir acompanando historias,
+                Entra a tu espacio para seguir acompañando historias,
                 oportunidades y procesos que transforman vidas.
               </p>
             </div>
@@ -88,10 +110,10 @@ function Login() {
                   <input
                     type="text"
                     name="username"
-                    placeholder="Ingresa tu Usuario"
+                    placeholder="Ingresa tu usuario"
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
-                    autoComplete="username"
+                    autoComplete="username"/*  */
                     required
                   />
                   <FiMail aria-hidden="true" />
@@ -128,18 +150,6 @@ function Login() {
             </form>
           </div>
         </article>
-
-        <aside className="login-visual" aria-label="Espacio reservado para imagen">
-          <div className="login-visual__frame">
-            <div className="login-visual__placeholder">
-              <span className="login-visual__tag">Imagen</span>
-              <p className="login-visual__title">Espacio reservado</p>
-              <p className="login-visual__text">
-                Aqui podemos poner la ilustracion o foto final cuando me la pases.
-              </p>
-            </div>
-          </div>
-        </aside>
       </section>
     </main>
   )
