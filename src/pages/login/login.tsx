@@ -7,7 +7,38 @@ import './login.css'
 const LOGIN_URL = 'http://localhost:3001/api/auth/login'
 
 function getDashboardRouteByRole(role: string) {
-  return role.trim().toLowerCase() === 'superadmin' ? '#/superadmin' : '#/'
+  const normalizedRole = role.trim().toLowerCase()
+
+  if (
+    normalizedRole === 'superadmin' ||
+    normalizedRole === 'admin_pais' ||
+    normalizedRole === 'editor'
+  ) {
+    return '#/superadmin'
+  }
+
+  return '#/'
+}
+
+function normalizeAuthenticatedUser(user: unknown) {
+  if (!user || typeof user !== 'object') {
+    return null
+  }
+
+  const typedUser = user as {
+    rol?: string
+    pais?: string
+    roles?: { id?: number | string; nombre?: string } | null
+    paises?: { id?: number | string; nombre?: string } | null
+  }
+
+  return {
+    ...typedUser,
+    rol: typedUser.rol ?? typedUser.roles?.nombre ?? '',
+    rol_id: typedUser.roles?.id ?? null,
+    pais: typedUser.pais ?? typedUser.paises?.nombre ?? '',
+    pais_id: typedUser.paises?.id ?? null,
+  }
 }
 
 function Login() {
@@ -45,9 +76,13 @@ function Login() {
       }
 
       const token = payload?.token ?? payload?.accessToken ?? payload?.jwt
-      const authenticatedUser = payload?.user ?? null
+      const authenticatedUser = normalizeAuthenticatedUser(payload?.user ?? null)
       const authenticatedRole =
-        authenticatedUser?.rol ?? payload?.rol ?? payload?.role ?? ''
+        authenticatedUser?.rol ??
+        payload?.rol ??
+        payload?.role ??
+        payload?.user?.roles?.nombre ??
+        ''
 
       if (token) {
         globalThis.localStorage.setItem('authToken', token)

@@ -34,16 +34,18 @@
 	position: relative;
 	z-index: 1;
 	display: grid;
-	grid-template-columns: 16rem minmax(0, 1fr);
+	grid-template-columns: var(--sidebar-width, 16rem) minmax(0, 1fr);
 	gap: 1.5rem;
 	width: min(100%, 76rem);
 	margin: 1.5rem auto 0;
 	align-items: start;
+	transition: grid-template-columns 0.28s ease;
 }
 
 .superadmin-content {
 	display: grid;
 	gap: 1.5rem;
+	min-width: 0;
 }
 
 .superadmin-card {

@@ -1,6 +1,7 @@
 .navbar-two {
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	gap: 1.5rem;
 	width: 16rem;
 	min-height: calc(100vh - 4rem);
@@ -8,6 +9,45 @@
 	border-radius: 1.75rem;
 	background: #ffffff;
 	box-shadow: 0 24px 50px rgba(58, 43, 97, 0.1);
+	transition:
+		width 0.28s ease,
+		padding 0.28s ease,
+		transform 0.28s ease;
+}
+
+.navbar-two__topbar {
+	display: flex;
+	justify-content: flex-end;
+	position: absolute;
+	top: 5.15rem;
+	right: 1.1rem;
+	z-index: 1;
+}
+
+.navbar-two__toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.8rem;
+	height: 2.8rem;
+	border: 1px solid rgba(93, 76, 140, 0.12);
+	border-radius: 0.95rem;
+	background: #faf7ff;
+	color: #5b3db4;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease,
+		transform 0.2s ease;
+}
+
+.navbar-two__toggle:hover {
+	background: #f3efff;
+	transform: translateY(-1px);
+}
+
+.navbar-two__toggle-icon {
+	font-size: 1.2rem;
 }
 
 .navbar-two__brand {
@@ -71,7 +111,8 @@
 	transition:
 		background-color 0.2s ease,
 		color 0.2s ease,
-		transform 0.2s ease;
+		transform 0.2s ease,
+		padding 0.28s ease;
 }
 
 .navbar-two__link:hover,
@@ -92,10 +133,56 @@
 	font-size: 1.3rem;
 }
 
+.navbar-two__label,
+.navbar-two__brand-copy {
+	transition:
+		opacity 0.2s ease,
+		max-width 0.28s ease,
+		margin 0.28s ease;
+}
+
 .navbar-two__logout {
 	margin-top: auto;
 	background: #faf7ff;
 	border: 1px solid rgba(93, 76, 140, 0.12);
+}
+
+.navbar-two--collapsed {
+	width: 5.5rem;
+	padding-inline: 0.8rem;
+}
+
+.navbar-two--collapsed .navbar-two__brand {
+	justify-content: center;
+	padding-inline: 0;
+	min-height: 0;
+	padding-block: 0;
+	border-bottom: 0;
+	margin: 0;
+}
+
+.navbar-two--collapsed .navbar-two__logo {
+	display: none;
+}
+
+.navbar-two--collapsed .navbar-two__brand-copy,
+.navbar-two--collapsed .navbar-two__label {
+	opacity: 0;
+	max-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	margin: 0;
+}
+
+.navbar-two--collapsed .navbar-two__link,
+.navbar-two--collapsed .navbar-two__logout {
+	justify-content: center;
+	padding-inline: 0.75rem;
+}
+
+.navbar-two--collapsed .navbar-two__topbar {
+	justify-content: center;
+	position: static;
 }
 
 @media (max-width: 920px) {
@@ -106,11 +193,34 @@
 		border-radius: 1.25rem;
 	}
 
+	.navbar-two__topbar {
+		position: static;
+		margin-bottom: 0;
+	}
+
 	.navbar-two__brand {
 		padding-bottom: 0.8rem;
 	}
 
 	.navbar-two__menu {
 		gap: 0.4rem;
+	}
+
+	.navbar-two--collapsed {
+		width: 100%;
+		padding: 1rem;
+	}
+
+	.navbar-two--collapsed .navbar-two__brand-copy,
+	.navbar-two--collapsed .navbar-two__label {
+		opacity: 1;
+		max-width: none;
+	}
+
+	.navbar-two--collapsed .navbar-two__link,
+	.navbar-two--collapsed .navbar-two__logout,
+	.navbar-two--collapsed .navbar-two__brand,
+	.navbar-two--collapsed .navbar-two__topbar {
+		justify-content: flex-start;
 	}
 }
