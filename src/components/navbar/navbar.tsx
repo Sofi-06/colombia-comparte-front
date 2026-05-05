@@ -42,8 +42,8 @@ function Navbar() {
         </ul>
       </nav>
 
-      <a className="navbar__donate" href="#donaciones">
-        <span>DONACIONES</span>
+      <a className="navbar__donate" href="#/login">
+        <span>Iniciar sesion</span>
         <span className="navbar__donate-icon" aria-hidden="true">
           {'\u2665'}
         </span>
