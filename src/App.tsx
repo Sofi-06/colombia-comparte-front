@@ -1,75 +1,123 @@
 import { useEffect, useState } from 'react'
+import { getCountryConfig } from './config/countries'
 import Home from './pages/home/home'
+import HomePrincipal from './pages/homePrincipal/homePrincipal'
 import Login from './pages/login/login'
 import News from './pages/news/news'
+import EditarNoticesPage from './pages/superadmin/notices/editarNotices/editarNotices'
+import NoticesPage from './pages/superadmin/notices/notices'
 import Superadmin from './pages/superadmin/superadmin'
+import CrearNoticesPage from './pages/superadmin/notices/crearNotices/crearNotices'
 import CrearUsuarioPage from './pages/superadmin/usuario/crear-usuario/crearUsuario'
 import EditarUsuarioPage from './pages/superadmin/usuario/editar-usuario/editarUsuario'
 import UsersPage from './pages/superadmin/usuario/usuario'
+import Testimonials from './pages/testimonials/testimonials'
+
+type Page =
+  | 'principal'
+  | 'home'
+  | 'news'
+  | 'testimonials'
+  | 'login'
+  | 'superadmin'
+  | 'notices'
+  | 'create-notice'
+  | 'edit-notice'
+  | 'users'
+  | 'create-user'
+  | 'edit-user'
+
+type AppRoute = {
+  countrySlug: string
+  page: Page
+}
 
 function hasActiveSession() {
   return Boolean(globalThis.localStorage.getItem('authToken'))
 }
 
-function getCurrentPage() {
-  if (globalThis.location.hash.startsWith('#/superadmin/usuarios/crear')) {
-    if (!hasActiveSession()) {
-      return 'login'
+function getCurrentRoute(): AppRoute {
+  const hash = globalThis.location.hash || ''
+
+  if (hash.startsWith('#/superadmin/usuarios/crear')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-user' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/noticias/crear')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-notice' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/usuarios/editar/')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-user' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/noticias/editar/')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-notice' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/noticias')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'notices' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/usuarios')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'users' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'superadmin' : 'login' }
+  }
+
+  if (hash.startsWith('#/login')) {
+    return { countrySlug: 'colombia', page: 'login' }
+  }
+
+  if (hash.startsWith('#/pais/')) {
+    const [, , countrySlug, maybePage] = hash.slice(1).split('/')
+
+    return {
+      countrySlug: countrySlug || 'colombia',
+      page:
+        maybePage === 'noticias'
+          ? 'news'
+          : maybePage === 'testimonios'
+            ? 'testimonials'
+            : 'home',
     }
-
-    return 'create-user'
   }
 
-  if (globalThis.location.hash.startsWith('#/superadmin/usuarios/editar/')) {
-    if (!hasActiveSession()) {
-      return 'login'
-    }
-
-    return 'edit-user'
+  if (hash.startsWith('#/noticias')) {
+    return { countrySlug: 'colombia', page: 'news' }
   }
 
-  if (globalThis.location.hash.startsWith('#/superadmin/usuarios')) {
-    if (!hasActiveSession()) {
-      return 'login'
-    }
-
-    return 'users'
+  if (hash.startsWith('#/testimonios')) {
+    return { countrySlug: 'colombia', page: 'testimonials' }
   }
 
-  if (globalThis.location.hash.startsWith('#/superadmin')) {
-    if (!hasActiveSession()) {
-      return 'login'
-    }
-
-    return 'superadmin'
+  if (hash.startsWith('#/home')) {
+    return { countrySlug: 'colombia', page: 'home' }
   }
 
-  if (globalThis.location.hash.startsWith('#/noticias')) {
-    return 'news'
-  }
-
-  if (globalThis.location.hash.startsWith('#/login')) {
-    return 'login'
-  }
-
-  return 'home'
+  return { countrySlug: 'colombia', page: 'principal' }
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState(getCurrentPage)
+  const [currentRoute, setCurrentRoute] = useState(getCurrentRoute)
+  const country = getCountryConfig(currentRoute.countrySlug)
 
   useEffect(() => {
     const handleHashChange = () => {
+      const nextRoute = getCurrentRoute()
+
       if (
         globalThis.location.hash.startsWith('#/superadmin') &&
         !hasActiveSession()
       ) {
         globalThis.location.replace('#/login')
-        setCurrentPage('login')
+        setCurrentRoute({ countrySlug: 'colombia', page: 'login' })
         return
       }
 
-      setCurrentPage(getCurrentPage())
+      setCurrentRoute(nextRoute)
     }
 
     globalThis.addEventListener('hashchange', handleHashChange)
@@ -77,31 +125,51 @@ function App() {
     return () => globalThis.removeEventListener('hashchange', handleHashChange)
   }, [])
 
-  if (currentPage === 'news') {
-    return <News />
-  }
-
-  if (currentPage === 'superadmin') {
-    return <Superadmin />
-  }
-
-  if (currentPage === 'users') {
-    return <UsersPage />
-  }
-
-  if (currentPage === 'create-user') {
-    return <CrearUsuarioPage />
-  }
-
-  if (currentPage === 'edit-user') {
-    return <EditarUsuarioPage />
-  }
-
-  if (currentPage === 'login') {
+  if (currentRoute.page === 'login') {
     return <Login />
   }
 
-  return <Home />
+  if (currentRoute.page === 'superadmin') {
+    return <Superadmin />
+  }
+
+  if (currentRoute.page === 'users') {
+    return <UsersPage />
+  }
+
+  if (currentRoute.page === 'notices') {
+    return <NoticesPage />
+  }
+
+  if (currentRoute.page === 'create-user') {
+    return <CrearUsuarioPage />
+  }
+
+  if (currentRoute.page === 'create-notice') {
+    return <CrearNoticesPage />
+  }
+
+  if (currentRoute.page === 'edit-user') {
+    return <EditarUsuarioPage />
+  }
+
+  if (currentRoute.page === 'edit-notice') {
+    return <EditarNoticesPage />
+  }
+
+  if (currentRoute.page === 'news') {
+    return <News country={country} />
+  }
+
+  if (currentRoute.page === 'home') {
+    return <Home country={country} />
+  }
+
+  if (currentRoute.page === 'testimonials') {
+    return <Testimonials country={country} />
+  }
+
+  return <HomePrincipal />
 }
 
 export default App

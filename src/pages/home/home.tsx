@@ -9,6 +9,8 @@ import { FiCalendar } from 'react-icons/fi'
 import { LuBuilding2, LuHandshake, LuRocket } from 'react-icons/lu'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
+import type { CountryConfig } from '../../config/countries'
+import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../services/news'
 import './home.css'
 
 type SupportGroup = {
@@ -39,6 +41,7 @@ type NewsItem = {
   excerpt: string
   date: string
   tone: string
+  image?: string
 }
 
 const heroSlides = [
@@ -266,13 +269,26 @@ function formatImpactValue(value: number) {
   return value.toLocaleString('en-US')
 }
 
-function Home() {
+function adaptCountryCopy(text: string, country: CountryConfig) {
+  return text
+    .replaceAll('Fundacion Colombia Comparte', `Fundacion ${country.brandName}`)
+    .replaceAll('Colombia Comparte', country.brandName)
+    .replaceAll('para Colombia', `para ${country.name}`)
+    .replaceAll('para Colombia:', `para ${country.name}:`)
+}
+
+type HomeProps = {
+  country: CountryConfig
+}
+
+function Home({ country }: HomeProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [currentNews, setCurrentNews] = useState(0)
   const [missionVisible, setMissionVisible] = useState(false)
   const [impactVisible, setImpactVisible] = useState(false)
   const [impactCounts, setImpactCounts] = useState(() => impactStats.map(() => 0))
+  const [dynamicNewsItems, setDynamicNewsItems] = useState<NewsRecord[]>([])
   const missionRef = useRef<HTMLElement | null>(null)
   const impactRef = useRef<HTMLElement | null>(null)
 
@@ -301,6 +317,19 @@ function Home() {
 
     return () => globalThis.clearInterval(intervalId)
   }, [])
+
+  useEffect(() => {
+    const loadPublicNews = async () => {
+      try {
+        const records = await getPublicNews(country.slug)
+        setDynamicNewsItems(records)
+      } catch {
+        setDynamicNewsItems([])
+      }
+    }
+
+    void loadPublicNews()
+  }, [country.slug])
 
   useEffect(() => {
     const node = missionRef.current
@@ -368,20 +397,47 @@ function Home() {
   }, [impactVisible])
 
   const activeSlide = heroSlides[currentSlide]
-  const visibleTestimonials = rotateItems(testimonials, currentTestimonial).slice(0, 3)
+  const heroSlidesWithPaths = heroSlides.map((slide) => ({
+    ...slide,
+    ctaHref: `${country.homePath}${slide.ctaHref}`,
+  }))
+  const personalizedTestimonials = testimonials.map((testimonial) => ({
+    ...testimonial,
+    quote: adaptCountryCopy(testimonial.quote, country),
+  }))
+  const personalizedNewsItems = (dynamicNewsItems.length
+    ? dynamicNewsItems.map((item, index) => ({
+        title: item.titulo ?? 'Noticia sin titulo',
+        excerpt: item.resumen ?? 'Sin resumen disponible.',
+        date: getNewsPublicationDate(item)
+          ? new Date(getNewsPublicationDate(item)).toLocaleDateString('es-CO', {
+              day: '2-digit',
+              month: 'short',
+            })
+          : newsItems[index % newsItems.length]?.date ?? '00 XXX',
+        tone: newsItems[index % newsItems.length]?.tone ?? 'news-card--brand',
+        image: item.imagen_principal_url ?? '',
+      }))
+    : newsItems
+  ).map((item) => ({
+    ...item,
+    title: adaptCountryCopy(item.title, country),
+    excerpt: adaptCountryCopy(item.excerpt, country),
+  }))
+  const visibleTestimonials = rotateItems(personalizedTestimonials, currentTestimonial).slice(0, 3)
   const visibleNews = [
-    newsItems[currentNews],
-    newsItems[(currentNews + 1) % newsItems.length],
+    personalizedNewsItems[currentNews],
+    personalizedNewsItems[(currentNews + 1) % personalizedNewsItems.length],
   ]
 
   return (
     <div className="home">
-      <Navbar />
+      <Navbar country={country} />
 
       <main>
         <section className="hero-carousel" id="inicio" aria-label="Destacados">
           <div className="hero-carousel__viewport">
-            {heroSlides.map((slide, index) => (
+            {heroSlidesWithPaths.map((slide, index) => (
               <article
                 key={slide.title}
                 className={`hero-section hero-section--${index + 1} ${
@@ -461,8 +517,8 @@ function Home() {
           <div className="support-section__header">
             <p className="support-section__kicker">A QUIENES APOYAMOS</p>
             <p className="support-section__lead">
-              En Colombia Comparte impulsamos el progreso humano y productivo dentro
-              y fuera de la empresa.
+              En {country.brandName} impulsamos el progreso humano y productivo
+              dentro y fuera de la empresa.
             </p>
             <p className="support-section__copy">
               Acompanamos a tres publicos principales:
@@ -514,7 +570,11 @@ function Home() {
                         ) : null}
                       </div>
 
-                      <a className="support-card__action" href="#contacto" aria-label={group.title}>
+                      <a
+                        className="support-card__action"
+                        href={`${country.homePath}#contacto`}
+                        aria-label={group.title}
+                      >
                         <span aria-hidden="true">{'>>'}</span>
                       </a>
                     </div>
@@ -533,11 +593,11 @@ function Home() {
           <div className="mission-section__intro">
             <h2 className="mission-section__title">Nuestra mision en accion</h2>
             <p className="mission-section__text">
-              En la Fundacion Colombia Comparte, nuestra labor se sostiene en tres
-              pilares que conectan emprendimiento, restauracion personal y cultura
-              de cuidado.
+              En la Fundacion {country.brandName}, nuestra labor se sostiene en
+              tres pilares que conectan emprendimiento, restauracion personal y
+              cultura de cuidado.
             </p>
-            <a className="mission-section__cta" href="#historia">
+            <a className="mission-section__cta" href={`${country.homePath}#historia`}>
               CONOCENOS
             </a>
           </div>
@@ -569,7 +629,7 @@ function Home() {
 
           <div className="history-story">
             <div className="history-story__content">
-              <p>Colombia Comparte nacio de una historia real.</p>
+              <p>{country.brandName} nacio de una historia real.</p>
               <p>Una historia de perdida, fe y reconstruccion.</p>
               <p>
                 Sus cofundadores vivieron en carne propia lo que significa
@@ -628,7 +688,7 @@ function Home() {
           </div>
         </section>
 
-        <section className="testimonials-section">
+        <section className="testimonials-section" id="testimonios">
           <h2 className="section-heading section-heading--purple">Testimonios</h2>
           <div className="testimonials-grid">
             {visibleTestimonials.map((testimonial, index) => (
@@ -666,9 +726,9 @@ function Home() {
         <section className="community-section" id="contacto">
           <div className="community-banner">
             <p className="community-banner__title">
-              Conoce a los emprendedores de Colombia Comparte
+              Conoce a los emprendedores de {country.brandName}
             </p>
-            <a className="community-banner__cta" href="#aula">
+            <a className="community-banner__cta" href={`${country.homePath}#aula`}>
               Directorio de Emprendedores
             </a>
           </div>
@@ -678,7 +738,7 @@ function Home() {
               <h2 className="section-heading section-heading--purple section-heading--left">
                 Noticias
               </h2>
-              <a className="news-section__more" href="#/noticias">
+              <a className="news-section__more" href={country.newsPath}>
                 VER MAS
               </a>
             </div>
@@ -704,14 +764,23 @@ function Home() {
                     className={`news-card news-card--animated ${item.tone}`}
                   >
                     <div className="news-card__body">
-                      <p className="news-card__meta">by Colombia Comparte</p>
+                      <p className="news-card__meta">by {country.brandName}</p>
                       <h3 className="news-card__title">{item.title}</h3>
                       <p className="news-card__excerpt">{item.excerpt}</p>
-                      <a className="news-card__link" href="#/noticias">
+                      <a className="news-card__link" href={country.newsPath}>
                         LEER MAS
                       </a>
                     </div>
-                    <div className="news-card__visual">
+                    <div
+                      className={`news-card__visual ${item.image ? 'news-card__visual--image' : ''}`}
+                      style={
+                        item.image
+                          ? {
+                              backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.16)), url(${item.image})`,
+                            }
+                          : undefined
+                      }
+                    >
                       <span className="news-card__date">{item.date}</span>
                     </div>
                   </article>
@@ -733,7 +802,7 @@ function Home() {
         </section>
       </main>
 
-      <Footer />
+      <Footer country={country} />
     </div>
   )
 }
