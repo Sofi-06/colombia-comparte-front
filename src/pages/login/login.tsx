@@ -1,6 +1,13 @@
 import { type ChangeEvent, type SyntheticEvent, useState } from 'react'
 import { HiOutlineArrowLeft } from 'react-icons/hi'
 import { FiLock, FiMail } from 'react-icons/fi'
+import { resolveCountrySlug } from '../../config/countries'
+import {
+  clearStoredDashboardCountry,
+  normalizeAuthUser,
+  setStoredDashboardCountry,
+} from '../../services/auth'
+import { getActiveCountries } from '../../services/countries'
 import robotIllustration from '../../assets/robot.png'
 import './login.css'
 
@@ -20,25 +27,38 @@ function getDashboardRouteByRole(role: string) {
   return '#/'
 }
 
-function normalizeAuthenticatedUser(user: unknown) {
-  if (!user || typeof user !== 'object') {
-    return null
+async function resolveDashboardCountry(user: ReturnType<typeof normalizeAuthUser>) {
+  if (user?.pais_id != null) {
+    try {
+      const countries = await getActiveCountries()
+      const matchedCountry = countries.find(
+        (country) => String(country.id) === String(user.pais_id),
+      )
+
+      if (matchedCountry) {
+        return resolveCountrySlug(matchedCountry.slug ?? matchedCountry.nombre)
+      }
+    } catch {
+      // Ignore country lookup failures and fall back to user payload fields.
+    }
   }
 
-  const typedUser = user as {
-    rol?: string
-    pais?: string
-    roles?: { id?: number | string; nombre?: string } | null
-    paises?: { id?: number | string; nombre?: string } | null
+  const candidates = [
+    user?.pais_slug,
+    user?.paises?.slug,
+    user?.pais,
+    user?.paises?.nombre,
+  ]
+
+  for (const candidate of candidates) {
+    const resolved = resolveCountrySlug(candidate)
+
+    if (resolved) {
+      return resolved
+    }
   }
 
-  return {
-    ...typedUser,
-    rol: typedUser.rol ?? typedUser.roles?.nombre ?? '',
-    rol_id: typedUser.roles?.id ?? null,
-    pais: typedUser.pais ?? typedUser.paises?.nombre ?? '',
-    pais_id: typedUser.paises?.id ?? null,
-  }
+  return ''
 }
 
 function Login() {
@@ -76,7 +96,7 @@ function Login() {
       }
 
       const token = payload?.token ?? payload?.accessToken ?? payload?.jwt
-      const authenticatedUser = normalizeAuthenticatedUser(payload?.user ?? null)
+      const authenticatedUser = normalizeAuthUser(payload?.user ?? null)
       const authenticatedRole =
         authenticatedUser?.rol ??
         payload?.rol ??
@@ -92,6 +112,25 @@ function Login() {
         globalThis.localStorage.setItem('authUser', JSON.stringify(authenticatedUser))
       } else {
         globalThis.localStorage.removeItem('authUser')
+      }
+
+      try {
+        const normalizedAuthenticatedRole =
+          typeof authenticatedRole === 'string' ? authenticatedRole.trim().toLowerCase() : ''
+
+        if (normalizedAuthenticatedRole === 'superadmin') {
+          clearStoredDashboardCountry()
+        } else {
+          const dashboardCountry = await resolveDashboardCountry(authenticatedUser)
+
+          if (dashboardCountry) {
+            setStoredDashboardCountry(dashboardCountry)
+          } else {
+            clearStoredDashboardCountry()
+          }
+        }
+      } catch {
+        clearStoredDashboardCountry()
       }
 
       setStatusMessage('Sesion iniciada correctamente.')

@@ -1,23 +1,6 @@
-
-import logo from '../../assets/colombia-comparte.png'
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaYoutube } from 'react-icons/fa6'
+import type { CountryConfig } from '../../config/countries'
 import './footer.css'
-import { FaFacebookF, FaInstagram, FaTiktok, FaLinkedinIn, FaYoutube } from 'react-icons/fa6'
-
-const exploreColumns = [
-  [
-    { label: 'Inicio', href: '#inicio' },
-    { label: 'Quienes somos', href: '#sobre-nosotros' },
-    { label: 'Programa edifica', href: '#programas' },
-    { label: 'Shows y conferencias', href: '#mision' },
-    { label: 'Blog', href: '#actualidad' },
-  ],
-  [
-    { label: 'Noticias', href: '#/noticias' },
-    { label: 'Contacto', href: '#contacto' },
-    { label: 'Donaciones', href: '#donaciones' },
-    { label: 'Solicitudes DIAN', href: '#contacto' },
-  ],
-]
 
 const socialLinks = [
   { label: 'Facebook', icon: <FaFacebookF />, href: '#' },
@@ -37,23 +20,61 @@ const contactItems = [
   },
 ]
 
-function Footer() {
+type FooterProps = {
+  country: CountryConfig
+}
+
+function Footer({ country }: FooterProps) {
+  const exploreColumns = country.shortNav
+    ? [
+        [
+          { label: 'Inicio', href: `${country.homePath}#inicio` },
+          { label: 'Noticias', href: country.newsPath },
+        ],
+        [
+          { label: 'Testimonios', href: country.testimonialsPath },
+          { label: 'Solicitudes', href: `${country.homePath}#contacto` },
+        ],
+      ]
+    : [
+        [
+          { label: 'Inicio', href: `${country.homePath}#inicio` },
+          { label: 'Quienes somos', href: `${country.homePath}#sobre-nosotros` },
+          { label: 'Programa edifica', href: `${country.homePath}#programas` },
+          { label: 'Shows y conferencias', href: `${country.homePath}#mision` },
+          { label: 'Blog', href: `${country.homePath}#actualidad` },
+        ],
+        [
+          { label: 'Noticias', href: country.newsPath },
+          { label: 'Contacto', href: `${country.homePath}#contacto` },
+          { label: 'Donaciones', href: `${country.homePath}#donaciones` },
+          { label: 'Solicitudes DIAN', href: `${country.homePath}#contacto` },
+        ],
+      ]
+
   return (
     <footer className="footer">
       <div className="footer__inner">
         <div className="footer__top">
           <div className="footer__brand">
-            <a className="footer__brand-link" href="#inicio" aria-label="Colombia Comparte">
-              <img className="footer__logo" src={logo} alt="" />
+            <a className="footer__brand-link" href={`${country.homePath}#inicio`} aria-label={country.brandName}>
+              <img className="footer__logo" src={country.logo} alt="" />
               <div className="footer__wordmark" aria-hidden="true">
-                <span>COLOMBIA</span>
+                <span>{country.name.toUpperCase()}</span>
                 <span>COMPARTE</span>
               </div>
             </a>
 
             <div className="footer__socials" aria-label="Redes sociales">
               {socialLinks.map((item) => (
-                <a key={item.label} className="footer__social" href={item.href} aria-label={item.label} target="_blank" rel="noopener noreferrer">
+                <a
+                  key={item.label}
+                  className="footer__social"
+                  href={item.href}
+                  aria-label={item.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span className="footer__social-icon">{item.icon}</span>
                 </a>
               ))}
@@ -91,7 +112,7 @@ function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <p>{'© Copyright 2023 por Armadillo Azul SAS'}</p>
+          <p>Copyright 2023 por Armadillo Azul SAS</p>
         </div>
       </div>
     </footer>

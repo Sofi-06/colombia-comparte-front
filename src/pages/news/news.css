@@ -153,9 +153,18 @@
 
 .news-page-card__visual {
   min-height: 16rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.08)),
     linear-gradient(135deg, #ece7df, #b58e74 54%, #7b574a);
+}
+
+.news-page-card__visual--image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .news-page-card__visual--photo {

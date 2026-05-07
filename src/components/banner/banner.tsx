@@ -1,47 +1,6 @@
 import dashboardIllustration from '../../assets/dashboard1.png'
+import { getStoredAuthUser, type AuthUser } from '../../services/auth'
 import './banner.css'
-
-type AuthUser = {
-  id?: number | string
-  nombre?: string
-  apellido?: string
-  email?: string
-  username?: string
-  rol?: string
-  rol_id?: number | string | null
-  pais?: string
-  pais_id?: number | string | null
-  roles?: {
-    id?: number | string
-    nombre?: string
-  } | null
-  paises?: {
-    id?: number | string
-    nombre?: string
-  } | null
-}
-
-function getStoredAuthUser(): AuthUser | null {
-  const rawUser = globalThis.localStorage.getItem('authUser')
-
-  if (!rawUser) {
-    return null
-  }
-
-  try {
-    const user = JSON.parse(rawUser) as AuthUser
-
-    return {
-      ...user,
-      rol: user.rol ?? user.roles?.nombre ?? '',
-      rol_id: user.rol_id ?? user.roles?.id ?? null,
-      pais: user.pais ?? user.paises?.nombre ?? '',
-      pais_id: user.pais_id ?? user.paises?.id ?? null,
-    }
-  } catch {
-    return null
-  }
-}
 
 function formatRoleLabel(role: string) {
   const normalizedRole = role.trim().toLowerCase()
