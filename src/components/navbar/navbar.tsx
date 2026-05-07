@@ -52,12 +52,6 @@ function Navbar({ country }: NavbarProps) {
         </ul>
       </nav>
 
-      <a className="navbar__donate" href="#/login">
-        <span>Iniciar sesion</span>
-        <span className="navbar__donate-icon" aria-hidden="true">
-          {'\u2665'}
-        </span>
-      </a>
       {country.shortNav ? (
         <a className="navbar__donate" href={`${country.homePath}#contacto`}>
           <span>SOLICITAR</span>

@@ -1038,9 +1038,18 @@
   position: relative;
   min-height: 100%;
   overflow: hidden;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.14)),
     linear-gradient(135deg, #e3d5c5, #b2846b 55%, #7e5a4c);
+}
+
+.news-card__visual--image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .news-card--photo .news-card__visual {

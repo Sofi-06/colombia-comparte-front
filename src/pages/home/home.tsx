@@ -10,6 +10,7 @@ import { LuBuilding2, LuHandshake, LuRocket } from 'react-icons/lu'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
 import type { CountryConfig } from '../../config/countries'
+import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../services/news'
 import './home.css'
 
 type SupportGroup = {
@@ -40,6 +41,7 @@ type NewsItem = {
   excerpt: string
   date: string
   tone: string
+  image?: string
 }
 
 const heroSlides = [
@@ -286,6 +288,7 @@ function Home({ country }: HomeProps) {
   const [missionVisible, setMissionVisible] = useState(false)
   const [impactVisible, setImpactVisible] = useState(false)
   const [impactCounts, setImpactCounts] = useState(() => impactStats.map(() => 0))
+  const [dynamicNewsItems, setDynamicNewsItems] = useState<NewsRecord[]>([])
   const missionRef = useRef<HTMLElement | null>(null)
   const impactRef = useRef<HTMLElement | null>(null)
 
@@ -314,6 +317,19 @@ function Home({ country }: HomeProps) {
 
     return () => globalThis.clearInterval(intervalId)
   }, [])
+
+  useEffect(() => {
+    const loadPublicNews = async () => {
+      try {
+        const records = await getPublicNews(country.slug)
+        setDynamicNewsItems(records)
+      } catch {
+        setDynamicNewsItems([])
+      }
+    }
+
+    void loadPublicNews()
+  }, [country.slug])
 
   useEffect(() => {
     const node = missionRef.current
@@ -389,7 +405,21 @@ function Home({ country }: HomeProps) {
     ...testimonial,
     quote: adaptCountryCopy(testimonial.quote, country),
   }))
-  const personalizedNewsItems = newsItems.map((item) => ({
+  const personalizedNewsItems = (dynamicNewsItems.length
+    ? dynamicNewsItems.map((item, index) => ({
+        title: item.titulo ?? 'Noticia sin titulo',
+        excerpt: item.resumen ?? 'Sin resumen disponible.',
+        date: getNewsPublicationDate(item)
+          ? new Date(getNewsPublicationDate(item)).toLocaleDateString('es-CO', {
+              day: '2-digit',
+              month: 'short',
+            })
+          : newsItems[index % newsItems.length]?.date ?? '00 XXX',
+        tone: newsItems[index % newsItems.length]?.tone ?? 'news-card--brand',
+        image: item.imagen_principal_url ?? '',
+      }))
+    : newsItems
+  ).map((item) => ({
     ...item,
     title: adaptCountryCopy(item.title, country),
     excerpt: adaptCountryCopy(item.excerpt, country),
@@ -741,7 +771,16 @@ function Home({ country }: HomeProps) {
                         LEER MAS
                       </a>
                     </div>
-                    <div className="news-card__visual">
+                    <div
+                      className={`news-card__visual ${item.image ? 'news-card__visual--image' : ''}`}
+                      style={
+                        item.image
+                          ? {
+                              backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.16)), url(${item.image})`,
+                            }
+                          : undefined
+                      }
+                    >
                       <span className="news-card__date">{item.date}</span>
                     </div>
                   </article>
