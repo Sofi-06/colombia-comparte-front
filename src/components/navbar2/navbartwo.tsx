@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import {
   HiOutlineBars3CenterLeft,
   HiOutlineChatBubbleLeftRight,
@@ -7,7 +8,17 @@ import {
   HiOutlineSquares2X2,
   HiOutlineUserGroup,
 } from 'react-icons/hi2'
-import logo from '../../assets/colombia-comparte.png'
+import {
+  getDashboardBrandByCountry,
+  type DashboardBrand,
+  getRegionalDashboardBrand,
+} from '../../config/countries'
+import {
+  clearStoredDashboardCountry,
+  getNormalizedRole,
+  getStoredAuthUser,
+  getStoredDashboardCountry,
+} from '../../services/auth'
 import './navbartwo.css'
 
 type NavbarTwoProps = {
@@ -32,7 +43,7 @@ const navItems = [
   {
     id: 'noticias',
     label: 'Noticias',
-    href: '#/noticias',
+    href: '#/superadmin/noticias',
     icon: HiOutlineNewspaper,
   },
   {
@@ -48,9 +59,38 @@ function NavbarTwo({
   collapsed = false,
   onToggleCollapse,
 }: NavbarTwoProps) {
+  const authUser = useMemo(getStoredAuthUser, [])
+  const normalizedRole = getNormalizedRole(authUser)
+  const storedDashboardCountry = getStoredDashboardCountry()
+  const fallbackBrand = useMemo(
+    () =>
+      normalizedRole === 'superadmin'
+        ? getRegionalDashboardBrand()
+        : getDashboardBrandByCountry(
+            authUser?.pais_slug ??
+              authUser?.pais ??
+              authUser?.paises?.slug ??
+              authUser?.paises?.nombre ??
+              storedDashboardCountry,
+          ),
+    [authUser, normalizedRole, storedDashboardCountry],
+  )
+  const [brand, setBrand] = useState<DashboardBrand>(fallbackBrand)
+
+  useEffect(() => {
+    setBrand(fallbackBrand)
+  }, [fallbackBrand])
+
+  useEffect(() => {
+    if (normalizedRole === 'superadmin') {
+      setBrand(getRegionalDashboardBrand())
+    }
+  }, [normalizedRole])
+
   const handleLogout = () => {
     globalThis.localStorage.removeItem('authToken')
     globalThis.localStorage.removeItem('authUser')
+    clearStoredDashboardCountry()
     globalThis.location.replace('#/login')
   }
 
@@ -76,10 +116,12 @@ function NavbarTwo({
       </div>
 
       <a className="navbar-two__brand" href="#/">
-        <img className="navbar-two__logo" src={logo} alt="" />
+        <img className="navbar-two__logo" src={brand.logo} alt="" />
         <div className="navbar-two__brand-copy">
-          <span className="navbar-two__brand-title">Colombia</span>
-          <span className="navbar-two__brand-subtitle">Comparte</span>
+          <span className="navbar-two__brand-title">{brand.name}</span>
+          <span className="navbar-two__brand-subtitle">
+            {brand.brandName.replace(`${brand.name} `, '')}
+          </span>
         </div>
       </a>
 

@@ -18,7 +18,7 @@ import chileLogo from '../../assets/Chile Co N.png'
 import colombiaLogo from '../../assets/Colombia Co N.png'
 import ecuadorLogo from '../../assets/Ecuador Co N.png'
 import grupoExitoLogo from '../../assets/Grupo_Exito_logo.svg.png'
-import heroBackground from '../../assets/hero.png'
+import heroBackground from '../../assets/dashboard1.png'
 import homecenterLogo from '../../assets/Logo_Homecenter_Sodimac.png'
 import latinoamericaLogo from '../../assets/Latinoamérica Co N.png'
 import logoBlanco from '../../assets/Logo Blanco.png'
@@ -251,7 +251,7 @@ function HomePrincipal() {
           ))}
         </nav>
 
-        <a className="home-principal__login" href="#/home">
+        <a className="home-principal__login" href="#/login">
           Inicio de sesion
         </a>
       </header>
