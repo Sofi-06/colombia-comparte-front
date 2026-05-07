@@ -1,23 +1,33 @@
-import logo from '../../assets/colombia-comparte.png'
+import type { CountryConfig } from '../../config/countries'
 import './navbar.css'
 
-const navItems = [
-  { label: 'Inicio', href: '#inicio' },
-  { label: 'Sobre nosotros', href: '#sobre-nosotros' },
-  { label: 'Programas', href: '#programas', dropdown: true },
-  { label: 'Noticias', href: '#/noticias' },
-  { label: 'Contacto', href: '#contacto' },
-  { label: 'Tu Aula', href: '#aula' },
-]
+type NavbarProps = {
+  country: CountryConfig
+}
 
-function Navbar() {
+function Navbar({ country }: NavbarProps) {
+  const navItems = country.shortNav
+    ? [
+        { label: 'Noticias', href: country.newsPath },
+        { label: 'Testimonios', href: country.testimonialsPath },
+        { label: 'Solicitudes', href: `${country.homePath}#contacto` },
+      ]
+    : [
+        { label: 'Inicio', href: `${country.homePath}#inicio` },
+        { label: 'Sobre nosotros', href: `${country.homePath}#sobre-nosotros` },
+        { label: 'Programas', href: `${country.homePath}#programas`, dropdown: true },
+        { label: 'Noticias', href: country.newsPath },
+        { label: 'Contacto', href: `${country.homePath}#contacto` },
+        { label: 'Tu Aula', href: `${country.homePath}#aula` },
+      ]
+
   return (
     <header className="navbar">
-      <a className="navbar__brand" href="#inicio" aria-label="Colombia Comparte">
-        <img className="navbar__logo" src={logo} alt="" />
+      <a className="navbar__brand" href={`${country.homePath}#inicio`} aria-label={country.brandName}>
+        <img className="navbar__logo" src={country.logo} alt="" />
         <div className="navbar__wordmark" aria-hidden="true">
           <span className="navbar__wordmark-line navbar__wordmark-line--top">
-            <span>COLOMBIA</span>
+            <span>{country.name.toUpperCase()}</span>
           </span>
           <span className="navbar__wordmark-line navbar__wordmark-line--bottom">
             <span>COMPARTE</span>
@@ -48,6 +58,21 @@ function Navbar() {
           {'\u2665'}
         </span>
       </a>
+      {country.shortNav ? (
+        <a className="navbar__donate" href={`${country.homePath}#contacto`}>
+          <span>SOLICITAR</span>
+          <span className="navbar__donate-icon" aria-hidden="true">
+            {'>'}
+          </span>
+        </a>
+      ) : (
+        <a className="navbar__donate" href={`${country.homePath}#donaciones`}>
+          <span>DONACIONES</span>
+          <span className="navbar__donate-icon" aria-hidden="true">
+            {'\u2665'}
+          </span>
+        </a>
+      )}
     </header>
   )
 }

@@ -57,7 +57,7 @@
 .footer__logo {
   width: 6.7rem;
   height: auto;
-  filter: brightness(0) invert(1);
+  object-fit: contain;
 }
 
 .footer__wordmark {

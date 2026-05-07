@@ -1,5 +1,6 @@
 import Navbar from '../../components/navbar/navbar'
 import Footer from '../../components/footer/footer'
+import type { CountryConfig } from '../../config/countries'
 import './news.css'
 
 const newsItems = [
@@ -33,10 +34,27 @@ const newsItems = [
   },
 ]
 
-function News() {
+function adaptCountryCopy(text: string, country: CountryConfig) {
+  return text
+    .replaceAll('Fundacion Colombia Comparte', `Fundacion ${country.brandName}`)
+    .replaceAll('Colombia Comparte', country.brandName)
+    .replaceAll('para Colombia:', `para ${country.name}:`)
+}
+
+type NewsProps = {
+  country: CountryConfig
+}
+
+function News({ country }: NewsProps) {
+  const personalizedNewsItems = newsItems.map((item) => ({
+    ...item,
+    title: adaptCountryCopy(item.title, country),
+    excerpt: adaptCountryCopy(item.excerpt, country),
+  }))
+
   return (
     <div className="news-page">
-      <Navbar />
+      <Navbar country={country} />
 
       <main>
         <section className="news-page__hero">
@@ -64,7 +82,7 @@ function News() {
           </div>
 
           <div className="news-page__grid">
-            {newsItems.map((item) => (
+            {personalizedNewsItems.map((item) => (
               <article key={item.title} className="news-page-card">
                 <div className={`news-page-card__visual ${item.visual}`}>
                   {item.visual === 'news-page-card__visual--brand' ? (
@@ -78,10 +96,10 @@ function News() {
                 </div>
 
                 <div className="news-page-card__body">
-                  <p className="news-page-card__meta">Colombia Comparte</p>
+                  <p className="news-page-card__meta">{country.brandName}</p>
                   <h2 className="news-page-card__title">{item.title}</h2>
                   <p className="news-page-card__excerpt">{item.excerpt}</p>
-                  <a className="news-page-card__link" href="#/noticias">
+                  <a className="news-page-card__link" href={country.newsPath}>
                     LEER MAS
                   </a>
                 </div>
@@ -93,7 +111,7 @@ function News() {
         </section>
       </main>
 
-      <Footer />
+      <Footer country={country} />
     </div>
   )
 }
