@@ -106,7 +106,7 @@ function CrearUsuarioPage() {
     setStatusTone('')
 
     if (requiresCountry && !form.pais_id) {
-      setStatusMessage('Selecciona un pais para roles distintos de superadmin.')
+      setStatusMessage('Selecciona un país para roles distintos de superadmin.')
       setStatusTone('error')
       setIsSaving(false)
       return
@@ -226,7 +226,7 @@ function CrearUsuarioPage() {
               </label>
 
               <label className="user-form-field">
-                <span>Contrasena</span>
+                <span>Contraseña</span>
                 <div className="user-form-control">
                   <HiOutlineKey aria-hidden="true" />
                   <input
@@ -237,7 +237,7 @@ function CrearUsuarioPage() {
                     onChange={handleInputChange}
                     minLength={6}
                     pattern="(?=.*[A-Za-z])(?=.*\d).{6,}"
-                    title="La contrasena debe tener minimo 6 caracteres, una letra y un numero."
+                    title="La contraseña debe tener mínimo 6 caracteres, una letra y un número."
                     required
                   />
                 </div>
@@ -265,7 +265,7 @@ function CrearUsuarioPage() {
               </label>
 
               <label className="user-form-field">
-                <span>Pais</span>
+                <span>País</span>
                 <div className="user-form-control user-form-control--select">
                   <HiOutlineGlobeAlt aria-hidden="true" />
                   <select
@@ -278,7 +278,7 @@ function CrearUsuarioPage() {
                     <option value="">
                       {isSuperadminRole(form.rol_id)
                         ? 'No aplica para superadmin'
-                        : 'Selecciona un pais'}
+                        : 'Selecciona un país'}
                     </option>
                     {countries.map((country) => (
                       <option key={country.id} value={country.id}>

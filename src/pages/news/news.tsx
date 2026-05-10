@@ -14,6 +14,8 @@ const newsItems = [
     title: 'Nuevos speakers se unen a nuestro portafolio de conferencistas',
     excerpt:
       'Nos complace anunciar la incorporacion de dos destacados profesionales a nuestro portafolio de conferencistas.',
+    content:
+      'Nos complace anunciar la incorporacion de dos destacados profesionales a nuestro portafolio de conferencistas.',
     date: '22 FEB',
     visual: 'news-page-card__visual--photo',
     image: '',
@@ -21,6 +23,8 @@ const newsItems = [
   {
     title: 'Inicia el segundo programa de altos estudios EDIFICA 2024',
     excerpt:
+      'Nuevas oportunidades para Colombia: iniciamos una nueva cohorte enfocada en crecimiento humano y emprendimiento.',
+    content:
       'Nuevas oportunidades para Colombia: iniciamos una nueva cohorte enfocada en crecimiento humano y emprendimiento.',
     date: '22 ENE',
     visual: 'news-page-card__visual--brand',
@@ -30,6 +34,8 @@ const newsItems = [
     title: 'La increible historia de los ricos pobres',
     excerpt:
       'La Fundacion Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran como volver a levantarse.',
+    content:
+      'La Fundacion Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran como volver a levantarse.',
     date: '04 MAY',
     visual: 'news-page-card__visual--radio',
     image: '',
@@ -37,6 +43,8 @@ const newsItems = [
   {
     title: 'Pobreza oculta e hipoteca inversa, por que estan relacionados',
     excerpt:
+      'El Gobierno acabo de reglamentar el polemico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
+    content:
       'El Gobierno acabo de reglamentar el polemico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
     date: '03 MAY',
     visual: 'news-page-card__visual--city',
@@ -59,6 +67,7 @@ function News({ country }: NewsProps) {
   const [dynamicNewsItems, setDynamicNewsItems] = useState<NewsRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
+  const [flippedCards, setFlippedCards] = useState<number[]>([])
 
   useEffect(() => {
     const loadPublicNews = async () => {
@@ -79,10 +88,23 @@ function News({ country }: NewsProps) {
     void loadPublicNews()
   }, [country.slug])
 
+  useEffect(() => {
+    setFlippedCards([])
+  }, [country.slug, dynamicNewsItems.length])
+
+  const toggleCard = (index: number) => {
+    setFlippedCards((current) =>
+      current.includes(index)
+        ? current.filter((item) => item !== index)
+        : [...current, index],
+    )
+  }
+
   const personalizedNewsItems = (dynamicNewsItems.length
     ? dynamicNewsItems.map((item, index) => ({
-        title: item.titulo ?? 'Noticia sin titulo',
+        title: item.titulo ?? 'Noticia sin título',
         excerpt: item.resumen ?? 'Sin resumen disponible.',
+        content: item.contenido ?? item.resumen ?? 'Sin contenido disponible.',
         date: getNewsPublicationDate(item)
           ? new Date(getNewsPublicationDate(item)).toLocaleDateString('es-CO', {
               day: '2-digit',
@@ -133,40 +155,73 @@ function News({ country }: NewsProps) {
           </div>
 
           <div className="news-page__grid">
-            {personalizedNewsItems.map((item) => (
-              <article key={item.title} className="news-page-card">
-                <div
-                  className={`news-page-card__visual ${item.visual} ${
-                    item.image ? 'news-page-card__visual--image' : ''
-                  }`}
-                  style={
-                    item.image
-                      ? {
-                          backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.16)), url(${item.image})`,
-                        }
-                      : undefined
-                  }
-                >
-                  {item.visual === 'news-page-card__visual--brand' ? (
-                    <div className="news-page-card__brandmark" aria-hidden="true">
-                      <span>EDI</span>
-                      <span>FI</span>
-                      <span>CA</span>
-                      <strong>EMPRESAS</strong>
+            {personalizedNewsItems.map((item, index) => (
+              <article
+                key={item.title}
+                className={`news-page-card ${flippedCards.includes(index) ? 'news-page-card--flipped' : ''}`}
+              >
+                <div className="news-page-card__inner">
+                  <div className="news-page-card__face news-page-card__face--front">
+                    <div
+                      className={`news-page-card__visual ${item.visual} ${
+                        item.image ? 'news-page-card__visual--image' : ''
+                      }`}
+                      style={
+                        item.image
+                          ? {
+                              backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.16)), url(${item.image})`,
+                            }
+                          : undefined
+                      }
+                    >
+                      {item.visual === 'news-page-card__visual--brand' ? (
+                        <div className="news-page-card__brandmark" aria-hidden="true">
+                          <span>EDI</span>
+                          <span>FI</span>
+                          <span>CA</span>
+                          <strong>EMPRESAS</strong>
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
-                </div>
 
-                <div className="news-page-card__body">
-                  <p className="news-page-card__meta">{country.brandName}</p>
-                  <h2 className="news-page-card__title">{item.title}</h2>
-                  <p className="news-page-card__excerpt">{item.excerpt}</p>
-                  <a className="news-page-card__link" href={country.newsPath}>
-                    LEER MAS
-                  </a>
-                </div>
+                    <div className="news-page-card__body">
+                      <p className="news-page-card__meta">{country.brandName}</p>
+                      <h2 className="news-page-card__title">{item.title}</h2>
+                      <p className="news-page-card__excerpt">{item.excerpt}</p>
+                      <button
+                        type="button"
+                        className="news-page-card__link"
+                        onClick={() => toggleCard(index)}
+                      >
+                        LEER MAS
+                      </button>
+                    </div>
 
-                <span className="news-page-card__date">{item.date}</span>
+                    <span className="news-page-card__date">{item.date}</span>
+                  </div>
+
+                  <div className="news-page-card__face news-page-card__face--back">
+                    <div className="news-page-card__back">
+                      <div className="news-page-card__detail-block">
+                        <span className="news-page-card__detail-label">Resumen</span>
+                        <p className="news-page-card__content news-page-card__content--summary">
+                          {item.excerpt}
+                        </p>
+                      </div>
+                      <div className="news-page-card__detail-block">
+                        <span className="news-page-card__detail-label">Contenido</span>
+                        <p className="news-page-card__content">{item.content}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="news-page-card__link"
+                        onClick={() => toggleCard(index)}
+                      >
+                        VOLVER
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </article>
             ))}
           </div>

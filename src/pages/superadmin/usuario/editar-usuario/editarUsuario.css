@@ -6,6 +6,7 @@
 .edit-user-card {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   min-height: calc(100vh - 4rem);
   padding: 1.6rem;
   border: 1px solid rgba(111, 74, 143, 0.1);
@@ -163,6 +164,42 @@
 .edit-user-actions button {
   background: linear-gradient(135deg, #7d60c9, #a350bd);
   color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 16px 28px rgba(136, 95, 194, 0.18);
+}
+
+.edit-user-password-card {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(111, 74, 143, 0.12);
+}
+
+.edit-user-password-card__header h2 {
+  margin: 0;
+  color: #291434;
+  font-size: 1.2rem;
+}
+
+.edit-user-password-card__header p {
+  margin: 0.35rem 0 0;
+  color: rgba(79, 61, 87, 0.82);
+}
+
+.edit-user-password-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-user-password-card__actions button {
+  min-height: 3.15rem;
+  padding: 0.95rem 1.2rem;
+  border-radius: 1rem;
+  border: 0;
+  background: linear-gradient(135deg, #7d60c9, #a350bd);
+  color: #ffffff;
+  font: inherit;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 16px 28px rgba(136, 95, 194, 0.18);

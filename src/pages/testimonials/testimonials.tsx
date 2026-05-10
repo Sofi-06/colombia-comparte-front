@@ -1,6 +1,12 @@
+import { useEffect, useState } from 'react'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
 import type { CountryConfig } from '../../config/countries'
+import {
+  getPublicTestimonials,
+  getTestimonialPublicationDate,
+  type TestimonialRecord,
+} from '../../services/testimonials'
 import './testimonials.css'
 
 type TestimonialItem = {
@@ -9,6 +15,8 @@ type TestimonialItem = {
   quote: string
   accent: string
   initials: string
+  image?: string
+  date?: string
 }
 
 const testimonialItems: TestimonialItem[] = [
@@ -19,6 +27,8 @@ const testimonialItems: TestimonialItem[] = [
       'Recupere mi confianza y converti mi experiencia en una idea que hoy sostiene a mi familia.',
     accent: 'testimonials-page-card--purple',
     initials: 'DG',
+    image: '',
+    date: '',
   },
   {
     name: 'Nelly Pantoja',
@@ -27,6 +37,8 @@ const testimonialItems: TestimonialItem[] = [
       'Aqui no solo me ensenaron a emprender, tambien me devolvieron claridad, disciplina y esperanza.',
     accent: 'testimonials-page-card--pink',
     initials: 'NP',
+    image: '',
+    date: '',
   },
   {
     name: 'Carlos Herrera',
@@ -35,6 +47,8 @@ const testimonialItems: TestimonialItem[] = [
       'Con Colombia Comparte logramos hablar de bienestar con resultados y acciones sostenibles.',
     accent: 'testimonials-page-card--blue',
     initials: 'CH',
+    image: '',
+    date: '',
   },
   {
     name: 'Martha Cuellar',
@@ -43,6 +57,8 @@ const testimonialItems: TestimonialItem[] = [
       'Volvi a confiar en mi proceso y encontre una comunidad que me acompano sin juzgarme.',
     accent: 'testimonials-page-card--orange',
     initials: 'MC',
+    image: '',
+    date: '',
   },
 ]
 
@@ -55,7 +71,65 @@ type TestimonialsProps = {
 }
 
 function Testimonials({ country }: TestimonialsProps) {
-  const personalizedTestimonials = testimonialItems.map((item) => ({
+  const [dynamicTestimonials, setDynamicTestimonials] = useState<TestimonialRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
+  const [flippedCards, setFlippedCards] = useState<number[]>([])
+
+  useEffect(() => {
+    const loadPublicTestimonials = async () => {
+      setIsLoading(true)
+      setHasError(false)
+
+      try {
+        const records = await getPublicTestimonials(country.slug)
+        setDynamicTestimonials(records)
+      } catch {
+        setHasError(true)
+        setDynamicTestimonials([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void loadPublicTestimonials()
+  }, [country.slug])
+
+  useEffect(() => {
+    setFlippedCards([])
+  }, [country.slug, dynamicTestimonials.length])
+
+  const toggleCard = (index: number) => {
+    setFlippedCards((current) =>
+      current.includes(index)
+        ? current.filter((item) => item !== index)
+        : [...current, index],
+    )
+  }
+
+  const personalizedTestimonials = (dynamicTestimonials.length
+    ? dynamicTestimonials.map((item, index) => ({
+        name: item.nombre ?? 'Testimonio sin nombre',
+        role: [item.cargo, item.empresa].filter(Boolean).join(' · ') || 'Comunidad beneficiaria',
+        quote: item.contenido ?? 'Sin contenido disponible.',
+        accent: testimonialItems[index % testimonialItems.length]?.accent ?? 'testimonials-page-card--purple',
+        initials: (item.nombre ?? 'TS')
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase() ?? '')
+          .join(''),
+        image: item.foto_url ?? '',
+        date: getTestimonialPublicationDate(item)
+          ? new Date(getTestimonialPublicationDate(item)).toLocaleDateString('es-CO', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+          : '',
+      }))
+    : testimonialItems
+  ).map((item) => ({
     ...item,
     quote: adaptCountryCopy(item.quote, country),
   }))
@@ -91,22 +165,76 @@ function Testimonials({ country }: TestimonialsProps) {
               Cada testimonio refleja una experiencia de reconstruccion,
               crecimiento y proposito compartido.
             </p>
+            {isLoading ? <small>Cargando testimonios del portal...</small> : null}
+            {!isLoading && hasError ? (
+              <small>Mostramos testimonios de referencia mientras se restablece la conexion.</small>
+            ) : null}
           </div>
 
           <div className="testimonials-page__grid">
-            {personalizedTestimonials.map((item) => (
-              <article key={item.name} className={`testimonials-page-card ${item.accent}`}>
-                <div className="testimonials-page-card__media">
-                  <span>{item.initials}</span>
-                </div>
+            {personalizedTestimonials.map((item, index) => (
+              <article
+                key={item.name}
+                className={`testimonials-page-card ${item.accent} ${
+                  flippedCards.includes(index) ? 'testimonials-page-card--flipped' : ''
+                }`}
+              >
+                <div className="testimonials-page-card__inner">
+                  <div className="testimonials-page-card__face testimonials-page-card__face--front">
+                    <div
+                      className={`testimonials-page-card__media ${
+                        item.image ? 'testimonials-page-card__media--image' : ''
+                      }`}
+                      style={
+                        item.image
+                          ? {
+                              backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.18), rgba(15, 23, 42, 0.3)), url(${item.image})`,
+                            }
+                          : undefined
+                      }
+                    >
+                      <span>{item.initials}</span>
+                    </div>
 
-                <div className="testimonials-page-card__body">
-                  <p className="testimonials-page-card__meta">{country.brandName}</p>
-                  <h2 className="testimonials-page-card__name">{item.name}</h2>
-                  <p className="testimonials-page-card__role">{item.role}</p>
-                  <blockquote className="testimonials-page-card__quote">
-                    "{item.quote}"
-                  </blockquote>
+                    <div className="testimonials-page-card__body">
+                      <p className="testimonials-page-card__meta">{country.brandName}</p>
+                      <h2 className="testimonials-page-card__name">{item.name}</h2>
+                      <p className="testimonials-page-card__role">{item.role}</p>
+                      {item.date ? (
+                        <p className="testimonials-page-card__date">{item.date}</p>
+                      ) : null}
+                      <blockquote className="testimonials-page-card__quote">
+                        "{item.quote}"
+                      </blockquote>
+                      <button
+                        type="button"
+                        className="testimonials-page-card__action"
+                        onClick={() => toggleCard(index)}
+                      >
+                        LEER MAS
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="testimonials-page-card__face testimonials-page-card__face--back">
+                    <div className="testimonials-page-card__back">
+                      <div className="testimonials-page-card__detail-block">
+                        <span className="testimonials-page-card__detail-label">Nombre</span>
+                        <h2 className="testimonials-page-card__name">{item.name}</h2>
+                      </div>
+                      <div className="testimonials-page-card__detail-block">
+                        <span className="testimonials-page-card__detail-label">Contenido</span>
+                        <p className="testimonials-page-card__back-copy">{item.quote}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="testimonials-page-card__action"
+                        onClick={() => toggleCard(index)}
+                      >
+                        VOLVER
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </article>
             ))}

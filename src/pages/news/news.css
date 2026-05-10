@@ -115,12 +115,36 @@
 
 .news-page-card {
   position: relative;
+  min-height: 25.5rem;
+  perspective: 1200px;
   background: #ffffff;
   box-shadow: 0 14px 36px rgba(29, 40, 84, 0.07);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
     filter 0.25s ease;
+}
+
+.news-page-card__inner {
+  position: relative;
+  min-height: 25.5rem;
+  transform-style: preserve-3d;
+  transition: transform 0.75s ease;
+}
+
+.news-page-card--flipped .news-page-card__inner {
+  transform: rotateY(180deg);
+}
+
+.news-page-card__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background: #ffffff;
+}
+
+.news-page-card__face--back {
+  transform: rotateY(180deg);
 }
 
 .news-page-card::after {
@@ -229,6 +253,16 @@
   padding: 1rem 1rem 1.2rem;
 }
 
+.news-page-card__back {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem 1rem 1.2rem;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.96), rgba(249, 250, 255, 0.94)),
+    linear-gradient(135deg, #ffffff, #f4f0ff);
+}
+
 .news-page-card__meta {
   margin: 0;
   color: #b5bac7;
@@ -251,13 +285,50 @@
 }
 
 .news-page-card__link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin-top: 0.9rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
   color: #0f3153;
-  text-decoration: none;
+  cursor: pointer;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
+}
+
+.news-page-card__back-date {
+  margin: 0.35rem 0 0;
+  color: #ff6e00;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.news-page-card__content {
+  margin: 0.9rem 0 0;
+  color: #5f697a;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  overflow: auto;
+}
+
+.news-page-card__content--summary {
+  overflow: visible;
+}
+
+.news-page-card__detail-block {
+  margin-top: 0.9rem;
+}
+
+.news-page-card__detail-label {
+  display: inline-block;
+  color: #473ca7;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .news-page-card__date {
@@ -309,6 +380,11 @@
 
   .news-page-card__visual {
     min-height: 13rem;
+  }
+
+  .news-page-card,
+  .news-page-card__inner {
+    min-height: 24rem;
   }
 
   .news-page-card__date {
