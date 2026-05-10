@@ -8,6 +8,9 @@ import EditarNoticesPage from './pages/superadmin/notices/editarNotices/editarNo
 import NoticesPage from './pages/superadmin/notices/notices'
 import Superadmin from './pages/superadmin/superadmin'
 import CrearNoticesPage from './pages/superadmin/notices/crearNotices/crearNotices'
+import CrearTestimonialsPage from './pages/superadmin/testimonials/crearTestimonials/crearTestimonials'
+import EditarTestimonialsPage from './pages/superadmin/testimonials/editarTestimonials/editarTestimonials'
+import TestimonialsAdminPage from './pages/superadmin/testimonials/testimonialsAdmin'
 import CrearUsuarioPage from './pages/superadmin/usuario/crear-usuario/crearUsuario'
 import EditarUsuarioPage from './pages/superadmin/usuario/editar-usuario/editarUsuario'
 import UsersPage from './pages/superadmin/usuario/usuario'
@@ -23,6 +26,9 @@ type Page =
   | 'notices'
   | 'create-notice'
   | 'edit-notice'
+  | 'admin-testimonials'
+  | 'create-testimonial'
+  | 'edit-testimonial'
   | 'users'
   | 'create-user'
   | 'edit-user'
@@ -47,6 +53,10 @@ function getCurrentRoute(): AppRoute {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-notice' : 'login' }
   }
 
+  if (hash.startsWith('#/superadmin/testimonios/crear')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-testimonial' : 'login' }
+  }
+
   if (hash.startsWith('#/superadmin/usuarios/editar/')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-user' : 'login' }
   }
@@ -55,8 +65,16 @@ function getCurrentRoute(): AppRoute {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-notice' : 'login' }
   }
 
+  if (hash.startsWith('#/superadmin/testimonios/editar/')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-testimonial' : 'login' }
+  }
+
   if (hash.startsWith('#/superadmin/noticias')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'notices' : 'login' }
+  }
+
+  if (hash.startsWith('#/superadmin/testimonios')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'admin-testimonials' : 'login' }
   }
 
   if (hash.startsWith('#/superadmin/usuarios')) {
@@ -149,12 +167,24 @@ function App() {
     return <CrearNoticesPage />
   }
 
+  if (currentRoute.page === 'create-testimonial') {
+    return <CrearTestimonialsPage />
+  }
+
   if (currentRoute.page === 'edit-user') {
     return <EditarUsuarioPage />
   }
 
   if (currentRoute.page === 'edit-notice') {
     return <EditarNoticesPage />
+  }
+
+  if (currentRoute.page === 'edit-testimonial') {
+    return <EditarTestimonialsPage />
+  }
+
+  if (currentRoute.page === 'admin-testimonials') {
+    return <TestimonialsAdminPage />
   }
 
   if (currentRoute.page === 'news') {

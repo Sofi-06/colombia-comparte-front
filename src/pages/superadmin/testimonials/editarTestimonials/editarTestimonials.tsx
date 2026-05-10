@@ -2,48 +2,65 @@ import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from '
 import {
   HiMiniChevronDown,
   HiOutlineArrowUpTray,
+  HiOutlineChatBubbleLeftRight,
   HiOutlineDocumentText,
   HiOutlineGlobeAlt,
-  HiOutlineNewspaper,
+  HiOutlineIdentification,
   HiOutlinePencilSquare,
 } from 'react-icons/hi2'
 import NavbarTwo from '../../../../components/navbar2/navbartwo'
 import { getStoredAuthUser, isSuperadmin } from '../../../../services/auth'
 import { getActiveCountries, type CountryRecord } from '../../../../services/countries'
-import { getNewsById, updateNews, type NewsPayload } from '../../../../services/news'
-import '../notices.css'
-import './editarNotices.css'
+import {
+  getTestimonialById,
+  updateTestimonial,
+  type TestimonialPayload,
+} from '../../../../services/testimonials'
+import '../../notices/notices.css'
+import './editarTestimonials.css'
 
 type FormState = {
-  titulo: string
-  resumen: string
+  nombre: string
+  cargo: string
+  empresa: string
   contenido: string
-  imagen_principal_url: string
-  estado: NewsPayload['estado']
+  foto_url: string
+  instagram_url: string
+  facebook_url: string
+  estado: TestimonialPayload['estado']
+  destacado: boolean
   pais_id: string
 }
 
 const INITIAL_FORM: FormState = {
-  titulo: '',
-  resumen: '',
+  nombre: '',
+  cargo: '',
+  empresa: '',
   contenido: '',
-  imagen_principal_url: '',
+  foto_url: '',
+  instagram_url: '',
+  facebook_url: '',
   estado: 'borrador',
+  destacado: false,
   pais_id: '',
 }
 
-function getNoticeIdFromHash() {
+function getTestimonialIdFromHash() {
   const segments = globalThis.location.hash.split('/')
   return segments[segments.length - 1] ?? ''
 }
 
-function toPayload(form: FormState): NewsPayload {
+function toPayload(form: FormState): TestimonialPayload {
   return {
-    titulo: form.titulo.trim(),
-    resumen: form.resumen.trim(),
+    nombre: form.nombre.trim(),
+    cargo: form.cargo.trim(),
+    empresa: form.empresa.trim(),
     contenido: form.contenido.trim(),
-    imagen_principal_url: form.imagen_principal_url.trim(),
+    foto_url: form.foto_url.trim(),
+    instagram_url: form.instagram_url.trim(),
+    facebook_url: form.facebook_url.trim(),
     estado: form.estado,
+    destacado: form.destacado,
     pais_id: Number(form.pais_id),
   }
 }
@@ -58,16 +75,16 @@ function readFileAsDataUrl(file: File) {
         return
       }
 
-      reject(new Error('No fue posible leer la imagen seleccionada.'))
+      reject(new Error('No fue posible leer la foto seleccionada.'))
     }
 
-    reader.onerror = () => reject(new Error('No fue posible leer la imagen seleccionada.'))
+    reader.onerror = () => reject(new Error('No fue posible leer la foto seleccionada.'))
     reader.readAsDataURL(file)
   })
 }
 
-function EditarNoticesPage() {
-  const noticeId = useMemo(getNoticeIdFromHash, [])
+function EditarTestimonialsPage() {
+  const testimonialId = useMemo(getTestimonialIdFromHash, [])
   const authUser = useMemo(getStoredAuthUser, [])
   const canChooseCountry = isSuperadmin(authUser)
   const lockedCountryId = authUser?.pais_id != null ? String(authUser.pais_id) : ''
@@ -81,40 +98,47 @@ function EditarNoticesPage() {
   const [selectedImageName, setSelectedImageName] = useState('')
 
   useEffect(() => {
-    const loadNotice = async () => {
+    const loadTestimonial = async () => {
       setIsLoading(true)
 
       try {
-        const [countryRecords, selectedNotice] = await Promise.all([
+        const [countryRecords, selectedTestimonial] = await Promise.all([
           getActiveCountries(),
-          getNewsById(noticeId),
+          getTestimonialById(testimonialId),
         ])
 
         setCountries(countryRecords)
 
-        if (!selectedNotice) {
-          setStatusMessage('No encontramos la noticia que intentas editar.')
+        if (!selectedTestimonial) {
+          setStatusMessage('No encontramos el testimonio que intentas editar.')
           setStatusTone('error')
           return
         }
 
         const resolvedCountryId =
-          selectedNotice.pais_id != null ? String(selectedNotice.pais_id) : lockedCountryId
+          selectedTestimonial.pais_id != null
+            ? String(selectedTestimonial.pais_id)
+            : lockedCountryId
 
         setForm({
-          titulo: selectedNotice.titulo ?? '',
-          resumen: selectedNotice.resumen ?? '',
-          contenido: selectedNotice.contenido ?? '',
-          imagen_principal_url: selectedNotice.imagen_principal_url ?? '',
+          nombre: selectedTestimonial.nombre ?? '',
+          cargo: selectedTestimonial.cargo ?? '',
+          empresa: selectedTestimonial.empresa ?? '',
+          contenido: selectedTestimonial.contenido ?? '',
+          foto_url: selectedTestimonial.foto_url ?? '',
+          instagram_url: selectedTestimonial.instagram_url ?? '',
+          facebook_url: selectedTestimonial.facebook_url ?? '',
           estado:
-            selectedNotice.estado === 'publicado' || selectedNotice.estado === 'despublicado'
-              ? selectedNotice.estado
+            selectedTestimonial.estado === 'publicado' ||
+            selectedTestimonial.estado === 'despublicado'
+              ? selectedTestimonial.estado
               : 'borrador',
+          destacado: Boolean(selectedTestimonial.destacado),
           pais_id: canChooseCountry ? resolvedCountryId : lockedCountryId || resolvedCountryId,
         })
       } catch (error) {
         setStatusMessage(
-          error instanceof Error ? error.message : 'No fue posible cargar la noticia.',
+          error instanceof Error ? error.message : 'No fue posible cargar el testimonio.',
         )
         setStatusTone('error')
       } finally {
@@ -122,14 +146,19 @@ function EditarNoticesPage() {
       }
     }
 
-    void loadNotice()
-  }, [canChooseCountry, lockedCountryId, noticeId])
+    void loadTestimonial()
+  }, [canChooseCountry, lockedCountryId, testimonialId])
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = event.target
     setForm((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target
+    setForm((current) => ({ ...current, [name]: checked }))
   }
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -142,12 +171,12 @@ function EditarNoticesPage() {
     try {
       const imageAsDataUrl = await readFileAsDataUrl(file)
       setSelectedImageName(file.name)
-      setForm((current) => ({ ...current, imagen_principal_url: imageAsDataUrl }))
+      setForm((current) => ({ ...current, foto_url: imageAsDataUrl }))
       setStatusMessage('')
       setStatusTone('')
     } catch (error) {
       setStatusMessage(
-        error instanceof Error ? error.message : 'No fue posible cargar la imagen.',
+        error instanceof Error ? error.message : 'No fue posible cargar la foto.',
       )
       setStatusTone('error')
     }
@@ -160,22 +189,22 @@ function EditarNoticesPage() {
     setStatusTone('')
 
     if (!form.pais_id) {
-      setStatusMessage('Selecciona el país donde se debe publicar la noticia.')
+      setStatusMessage('Selecciona el país donde se debe publicar el testimonio.')
       setStatusTone('error')
       setIsSaving(false)
       return
     }
 
     try {
-      await updateNews(noticeId, toPayload(form))
-      setStatusMessage('Noticia actualizada correctamente.')
+      await updateTestimonial(testimonialId, toPayload(form))
+      setStatusMessage('Testimonio actualizado correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/noticias'
+        globalThis.location.hash = '#/superadmin/testimonios'
       }, 900)
     } catch (error) {
       setStatusMessage(
-        error instanceof Error ? error.message : 'No fue posible actualizar la noticia.',
+        error instanceof Error ? error.message : 'No fue posible actualizar el testimonio.',
       )
       setStatusTone('error')
     } finally {
@@ -190,11 +219,11 @@ function EditarNoticesPage() {
 
       <section
         className="superadmin-shell"
-        aria-label="Editar noticia"
+        aria-label="Editar testimonio"
         style={{ ['--sidebar-width' as string]: isNavCollapsed ? '5.5rem' : '16rem' }}
       >
         <NavbarTwo
-          activeItem="noticias"
+          activeItem="testimonios"
           collapsed={isNavCollapsed}
           onToggleCollapse={() => setIsNavCollapsed((current) => !current)}
         />
@@ -203,25 +232,25 @@ function EditarNoticesPage() {
           <article className="notice-form-card">
             <div className="notice-form-card__header">
               <div>
-                <h1>Editar noticia</h1>
-                <p>Ajusta el contenido y confirma el país de publicación antes de guardar.</p>
+                <h1>Editar testimonio</h1>
+                <p>Actualiza la historia y confirma el país antes de guardar.</p>
               </div>
-              <a href="#/superadmin/noticias">Volver al listado</a>
+              <a href="#/superadmin/testimonios">Volver al listado</a>
             </div>
 
             {isLoading ? (
-              <p className="notice-form-loading">Cargando información de la noticia...</p>
+              <p className="notice-form-loading">Cargando informacion del testimonio...</p>
             ) : (
               <form className="notice-form-grid" onSubmit={handleSubmit}>
                 <label className="notice-form-field">
-                  <span>Título</span>
+                  <span>Nombre</span>
                   <div className="notice-form-control">
-                    <HiOutlineNewspaper aria-hidden="true" />
+                    <HiOutlineIdentification aria-hidden="true" />
                     <input
                       type="text"
-                      name="titulo"
-                      placeholder="Nueva noticia"
-                      value={form.titulo}
+                      name="nombre"
+                      placeholder="Nombre de la persona"
+                      value={form.nombre}
                       onChange={handleInputChange}
                       maxLength={180}
                       required
@@ -242,18 +271,32 @@ function EditarNoticesPage() {
                   </div>
                 </label>
 
-                <label className="notice-form-field notice-form-field--full">
-                  <span>Resumen</span>
-                  <div className="notice-form-control notice-form-control--textarea">
-                    <HiOutlineDocumentText aria-hidden="true" />
-                    <textarea
-                      name="resumen"
-                      placeholder="Resumen corto de la noticia"
-                      value={form.resumen}
+                <label className="notice-form-field">
+                  <span>Cargo</span>
+                  <div className="notice-form-control">
+                    <HiOutlineIdentification aria-hidden="true" />
+                    <input
+                      type="text"
+                      name="cargo"
+                      placeholder="Cargo o rol"
+                      value={form.cargo}
                       onChange={handleInputChange}
-                      rows={3}
-                      maxLength={400}
-                      required
+                      maxLength={180}
+                    />
+                  </div>
+                </label>
+
+                <label className="notice-form-field">
+                  <span>Empresa</span>
+                  <div className="notice-form-control">
+                    <HiOutlineChatBubbleLeftRight aria-hidden="true" />
+                    <input
+                      type="text"
+                      name="empresa"
+                      placeholder="Empresa u organizacion"
+                      value={form.empresa}
+                      onChange={handleInputChange}
+                      maxLength={180}
                     />
                   </div>
                 </label>
@@ -264,7 +307,7 @@ function EditarNoticesPage() {
                     <HiOutlineDocumentText aria-hidden="true" />
                     <textarea
                       name="contenido"
-                      placeholder="Contenido completo de la noticia"
+                      placeholder="Escribe el testimonio completo"
                       value={form.contenido}
                       onChange={handleInputChange}
                       rows={8}
@@ -274,21 +317,21 @@ function EditarNoticesPage() {
                 </label>
 
                 <label className="notice-form-field">
-                  <span>Imagen principal</span>
+                  <span>Foto</span>
                   <div className="notice-form-control">
                     <HiOutlineArrowUpTray aria-hidden="true" />
                     <input
                       type="file"
                       accept="image/*"
                       onChange={(event) => void handleImageChange(event)}
-                      required={!form.imagen_principal_url}
+                      required={!form.foto_url}
                     />
                   </div>
                   <p className="notice-form-help">
                     {selectedImageName ||
-                      (form.imagen_principal_url
-                        ? 'La noticia ya tiene una imagen guardada. Puedes reemplazarla con otro archivo.'
-                        : 'Selecciona una imagen desde tu equipo para la portada.')}
+                      (form.foto_url
+                        ? 'El testimonio ya tiene una foto guardada. Puedes reemplazarla con otro archivo.'
+                        : 'Selecciona una foto desde tu equipo para el testimonio.')}
                   </p>
                 </label>
 
@@ -316,9 +359,47 @@ function EditarNoticesPage() {
                   </div>
                   {!canChooseCountry ? (
                     <p className="notice-form-help">
-                      Tu rol publica noticias únicamente en su país asignado.
+                      Tu rol publica testimonios únicamente en su país asignado.
                     </p>
                   ) : null}
+                </label>
+
+                <label className="notice-form-field">
+                  <span>Instagram</span>
+                  <div className="notice-form-control">
+                    <HiOutlineChatBubbleLeftRight aria-hidden="true" />
+                    <input
+                      type="url"
+                      name="instagram_url"
+                      placeholder="https://instagram.com/..."
+                      value={form.instagram_url}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </label>
+
+                <label className="notice-form-field">
+                  <span>Facebook</span>
+                  <div className="notice-form-control">
+                    <HiOutlineChatBubbleLeftRight aria-hidden="true" />
+                    <input
+                      type="url"
+                      name="facebook_url"
+                      placeholder="https://facebook.com/..."
+                      value={form.facebook_url}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </label>
+
+                <label className="testimonial-form-toggle notice-form-field--full">
+                  <input
+                    type="checkbox"
+                    name="destacado"
+                    checked={form.destacado}
+                    onChange={handleCheckboxChange}
+                  />
+                  <span>Marcar como testimonio destacado</span>
                 </label>
 
                 {statusMessage ? (
@@ -328,9 +409,9 @@ function EditarNoticesPage() {
                 ) : null}
 
                 <div className="notice-form-actions">
-                  <a href="#/superadmin/noticias">Cancelar</a>
+                  <a href="#/superadmin/testimonios">Cancelar</a>
                   <button type="submit" disabled={isSaving}>
-                    {isSaving ? 'Guardando...' : 'Actualizar noticia'}
+                    {isSaving ? 'Guardando...' : 'Actualizar testimonio'}
                   </button>
                 </div>
               </form>
@@ -342,4 +423,4 @@ function EditarNoticesPage() {
   )
 }
 
-export default EditarNoticesPage
+export default EditarTestimonialsPage

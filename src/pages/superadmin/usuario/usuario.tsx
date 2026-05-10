@@ -26,7 +26,7 @@ function getRoleLabel(user: UserRecord) {
 }
 
 function getCountryLabel(user: UserRecord) {
-  return user.pais ?? (user.pais_id != null ? `Pais ${user.pais_id}` : 'Sin pais')
+  return user.pais ?? (user.pais_id != null ? `País ${user.pais_id}` : 'Sin país')
 }
 
 function getRoleTone(user: UserRecord) {

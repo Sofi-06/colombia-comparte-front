@@ -29,9 +29,11 @@ export type AuthUser = {
     name?: string
     slug?: string
   } | null
+  pregunta_seguridad?: string
 }
 
 const DASHBOARD_COUNTRY_STORAGE_KEY = 'dashboardCountry'
+const AUTH_API_BASE_URL = 'http://localhost:3001/api/auth'
 
 function toRecord(value: unknown) {
   return value && typeof value === 'object' && !Array.isArray(value)
@@ -155,4 +157,93 @@ export function getNormalizedRole(user: AuthUser | null) {
 
 export function isSuperadmin(user: AuthUser | null) {
   return getNormalizedRole(user) === 'superadmin'
+}
+
+function getAuthHeaders() {
+  const token = globalThis.localStorage.getItem('authToken')
+
+  if (!token) {
+    throw new Error('Tu sesion no es valida. Inicia sesion nuevamente.')
+  }
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  }
+}
+
+type AuthRequestOptions = {
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH'
+  body?: Record<string, unknown>
+  auth?: boolean
+}
+
+async function authRequest<T>(
+  path: string,
+  options: AuthRequestOptions = {},
+): Promise<T> {
+  const response = await fetch(`${AUTH_API_BASE_URL}${path}`, {
+    method: options.method ?? 'GET',
+    headers: options.auth === false
+      ? {
+          'Content-Type': 'application/json',
+        }
+      : getAuthHeaders(),
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  })
+
+  const payload = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const message =
+      payload?.message ?? payload?.error ?? 'No fue posible completar la solicitud.'
+
+    throw new Error(message)
+  }
+
+  return payload as T
+}
+
+export async function forgotPassword(identifier: string) {
+  return authRequest<{
+    message?: string
+    username?: string
+    pregunta_seguridad?: string
+  }>('/forgot-password', {
+    method: 'POST',
+    body: { identifier },
+    auth: false,
+  })
+}
+
+export async function resetPassword(
+  username: string,
+  respuesta_seguridad: string,
+  nueva_password: string,
+) {
+  return authRequest<{ message?: string }>('/reset-password', {
+    method: 'POST',
+    body: { username, respuesta_seguridad, nueva_password },
+    auth: false,
+  })
+}
+
+export async function changeOwnPassword(
+  password_actual: string,
+  nueva_password: string,
+) {
+  return authRequest<{ message?: string }>('/change-password', {
+    method: 'PUT',
+    body: { password_actual, nueva_password },
+  })
+}
+
+export async function updateSecurityQuestion(
+  pregunta_seguridad: string,
+  respuesta_seguridad: string,
+) {
+  return authRequest<{ message?: string; user?: unknown }>('/security-question', {
+    method: 'PATCH',
+    body: { pregunta_seguridad, respuesta_seguridad },
+  })
 }

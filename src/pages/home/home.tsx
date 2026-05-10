@@ -11,6 +11,7 @@ import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
 import type { CountryConfig } from '../../config/countries'
 import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../services/news'
+import { getPublicTestimonials, type TestimonialRecord } from '../../services/testimonials'
 import './home.css'
 
 type SupportGroup = {
@@ -34,6 +35,7 @@ type Testimonial = {
   quote: string
   tone: string
   initials: string
+  image?: string
 }
 
 type NewsItem = {
@@ -289,6 +291,8 @@ function Home({ country }: HomeProps) {
   const [impactVisible, setImpactVisible] = useState(false)
   const [impactCounts, setImpactCounts] = useState(() => impactStats.map(() => 0))
   const [dynamicNewsItems, setDynamicNewsItems] = useState<NewsRecord[]>([])
+  const [dynamicTestimonials, setDynamicTestimonials] = useState<TestimonialRecord[]>([])
+  const [flippedHomeTestimonials, setFlippedHomeTestimonials] = useState<number[]>([])
   const missionRef = useRef<HTMLElement | null>(null)
   const impactRef = useRef<HTMLElement | null>(null)
 
@@ -296,24 +300,6 @@ function Home({ country }: HomeProps) {
     const intervalId = globalThis.setInterval(() => {
       setCurrentSlide((previousSlide) => (previousSlide + 1) % heroSlides.length)
     }, 6000)
-
-    return () => globalThis.clearInterval(intervalId)
-  }, [])
-
-  useEffect(() => {
-    const intervalId = globalThis.setInterval(() => {
-      setCurrentTestimonial(
-        (previousTestimonial) => (previousTestimonial + 1) % testimonials.length,
-      )
-    }, 5200)
-
-    return () => globalThis.clearInterval(intervalId)
-  }, [])
-
-  useEffect(() => {
-    const intervalId = globalThis.setInterval(() => {
-      setCurrentNews((previousNews) => (previousNews + 1) % newsItems.length)
-    }, 5400)
 
     return () => globalThis.clearInterval(intervalId)
   }, [])
@@ -329,6 +315,19 @@ function Home({ country }: HomeProps) {
     }
 
     void loadPublicNews()
+  }, [country.slug])
+
+  useEffect(() => {
+    const loadPublicTestimonials = async () => {
+      try {
+        const records = await getPublicTestimonials(country.slug)
+        setDynamicTestimonials(records)
+      } catch {
+        setDynamicTestimonials([])
+      }
+    }
+
+    void loadPublicTestimonials()
   }, [country.slug])
 
   useEffect(() => {
@@ -401,13 +400,31 @@ function Home({ country }: HomeProps) {
     ...slide,
     ctaHref: `${country.homePath}${slide.ctaHref}`,
   }))
-  const personalizedTestimonials = testimonials.map((testimonial) => ({
+  const personalizedTestimonials = (dynamicTestimonials.length
+    ? dynamicTestimonials.map((testimonial, index) => ({
+        name: testimonial.nombre ?? 'Testimonio sin nombre',
+        role:
+          [testimonial.cargo, testimonial.empresa].filter(Boolean).join(' · ') ||
+          'Comunidad beneficiaria',
+        quote: testimonial.contenido ?? 'Sin contenido disponible.',
+        tone: testimonials[index % testimonials.length]?.tone ?? 'testimonial-card--purple',
+        initials: (testimonial.nombre ?? 'TS')
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase() ?? '')
+          .join(''),
+        image: testimonial.foto_url ?? '',
+      }))
+    : testimonials
+  ).map((testimonial) => ({
     ...testimonial,
     quote: adaptCountryCopy(testimonial.quote, country),
   }))
+  const testimonialCount = personalizedTestimonials.length
   const personalizedNewsItems = (dynamicNewsItems.length
     ? dynamicNewsItems.map((item, index) => ({
-        title: item.titulo ?? 'Noticia sin titulo',
+        title: item.titulo ?? 'Noticia sin título',
         excerpt: item.resumen ?? 'Sin resumen disponible.',
         date: getNewsPublicationDate(item)
           ? new Date(getNewsPublicationDate(item)).toLocaleDateString('es-CO', {
@@ -424,6 +441,43 @@ function Home({ country }: HomeProps) {
     title: adaptCountryCopy(item.title, country),
     excerpt: adaptCountryCopy(item.excerpt, country),
   }))
+  const newsCount = personalizedNewsItems.length
+
+  useEffect(() => {
+    const intervalId = globalThis.setInterval(() => {
+      setCurrentTestimonial(
+        (previousTestimonial) => (previousTestimonial + 1) % testimonialCount,
+      )
+    }, 5200)
+
+    return () => globalThis.clearInterval(intervalId)
+  }, [testimonialCount])
+
+  useEffect(() => {
+    const intervalId = globalThis.setInterval(() => {
+      setCurrentNews((previousNews) => (previousNews + 1) % newsCount)
+    }, 5400)
+
+    return () => globalThis.clearInterval(intervalId)
+  }, [newsCount])
+
+  useEffect(() => {
+    setCurrentNews(0)
+  }, [country.slug, newsCount])
+
+  useEffect(() => {
+    setCurrentTestimonial(0)
+    setFlippedHomeTestimonials([])
+  }, [country.slug, testimonialCount])
+
+  const toggleHomeTestimonial = (index: number) => {
+    setFlippedHomeTestimonials((current) =>
+      current.includes(index)
+        ? current.filter((item) => item !== index)
+        : [...current, index],
+    )
+  }
+
   const visibleTestimonials = rotateItems(personalizedTestimonials, currentTestimonial).slice(0, 3)
   const visibleNews = [
     personalizedNewsItems[currentNews],
@@ -696,20 +750,66 @@ function Home({ country }: HomeProps) {
                 key={`${currentTestimonial}-${testimonial.name}`}
                 className={`testimonial-card ${testimonial.tone} ${
                   index === 1 ? 'testimonial-card--focus' : ''
+                } ${
+                  flippedHomeTestimonials.includes(index) ? 'testimonial-card--flipped' : ''
                 }`}
               >
-                <p className="testimonial-card__name">{testimonial.name}</p>
-                <div className="testimonial-card__photo">
-                  <span>{testimonial.initials}</span>
+                <div className="testimonial-card__inner">
+                  <div className="testimonial-card__face testimonial-card__face--front">
+                    <p className="testimonial-card__name">{testimonial.name}</p>
+                    <div
+                      className={`testimonial-card__photo ${
+                        testimonial.image ? 'testimonial-card__photo--image' : ''
+                      }`}
+                      style={
+                        testimonial.image
+                          ? {
+                              backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.16), rgba(15, 23, 42, 0.26)), url(${testimonial.image})`,
+                            }
+                          : undefined
+                      }
+                    >
+                      <span>{testimonial.initials}</span>
+                    </div>
+                    <p className="testimonial-card__role">{testimonial.role}</p>
+                    <p className="testimonial-card__quote">{testimonial.quote}</p>
+                    <button
+                      type="button"
+                      className="testimonial-card__action"
+                      onClick={() => toggleHomeTestimonial(index)}
+                    >
+                      LEER MAS
+                    </button>
+                  </div>
+
+                  <div className="testimonial-card__face testimonial-card__face--back">
+                    <div className="testimonial-card__back">
+                      <div className="testimonial-card__detail-block">
+                        <span className="testimonial-card__detail-label">Nombre</span>
+                        <p className="testimonial-card__name testimonial-card__name--back">
+                          {testimonial.name}
+                        </p>
+                      </div>
+                      <div className="testimonial-card__detail-block">
+                        <span className="testimonial-card__detail-label">Contenido</span>
+                        <p className="testimonial-card__back-copy">{testimonial.quote}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="testimonial-card__action"
+                        onClick={() => toggleHomeTestimonial(index)}
+                      >
+                        VOLVER
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <p className="testimonial-card__role">{testimonial.role}</p>
-                <p className="testimonial-card__quote">{testimonial.quote}</p>
               </article>
             ))}
           </div>
 
           <div className="testimonials-dots" aria-label="Indicadores de testimonios">
-            {testimonials.map((testimonial, index) => (
+            {personalizedTestimonials.map((testimonial, index) => (
               <button
                 key={testimonial.name}
                 type="button"
@@ -750,7 +850,7 @@ function Home({ country }: HomeProps) {
                 aria-label="Noticia anterior"
                 onClick={() =>
                   setCurrentNews((previousNews) =>
-                    previousNews === 0 ? newsItems.length - 1 : previousNews - 1,
+                    previousNews === 0 ? newsCount - 1 : previousNews - 1,
                   )
                 }
               >
@@ -792,7 +892,7 @@ function Home({ country }: HomeProps) {
                 className="side-arrow side-arrow--light"
                 aria-label="Noticia siguiente"
                 onClick={() =>
-                  setCurrentNews((previousNews) => (previousNews + 1) % newsItems.length)
+                  setCurrentNews((previousNews) => (previousNews + 1) % newsCount)
                 }
               >
                 {'>'}

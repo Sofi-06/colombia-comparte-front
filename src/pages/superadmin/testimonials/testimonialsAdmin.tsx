@@ -11,12 +11,13 @@ import NavbarTwo from '../../../components/navbar2/navbartwo'
 import { getStoredAuthUser, isSuperadmin } from '../../../services/auth'
 import { getActiveCountries, type CountryRecord } from '../../../services/countries'
 import {
-  deleteNews,
-  getNews,
-  getNewsPublicationDate,
-  type NewsRecord,
-} from '../../../services/news'
-import './notices.css'
+  deleteTestimonial,
+  getTestimonialCountryLabel,
+  getTestimonialPublicationDate,
+  getTestimonials,
+  type TestimonialRecord,
+} from '../../../services/testimonials'
+import '../notices/notices.css'
 
 type PaginationItem = number | 'ellipsis'
 
@@ -58,8 +59,8 @@ function getStatusTone(status: string) {
   return 'borrador'
 }
 
-function getFormattedDate(notice: NewsRecord) {
-  const value = getNewsPublicationDate(notice)
+function getFormattedDate(testimonial: TestimonialRecord) {
+  const value = getTestimonialPublicationDate(testimonial)
 
   if (!value) {
     return 'Sin fecha'
@@ -78,29 +79,9 @@ function getFormattedDate(notice: NewsRecord) {
   })
 }
 
-function getRawCountryLabel(notice: NewsRecord) {
-  const noticeCountry =
-    (notice.pais && typeof notice.pais === 'object' ? notice.pais : null) ??
-    (notice.paises && typeof notice.paises === 'object' ? notice.paises : null) ??
-    (notice.country && typeof notice.country === 'object' ? notice.country : null)
-
-  return (
-    (typeof notice.pais === 'string' ? notice.pais : undefined) ??
-    (typeof notice.country === 'string' ? notice.country : undefined) ??
-    notice.pais_nombre ??
-    notice.nombre_pais ??
-    notice.nombrePais ??
-    notice.country_name ??
-    notice.countryName ??
-    noticeCountry?.nombre ??
-    noticeCountry?.name ??
-    ''
-  ).trim()
-}
-
-function NoticesPage() {
+function TestimonialsAdminPage() {
   const authUser = useMemo(getStoredAuthUser, [])
-  const [notices, setNotices] = useState<NewsRecord[]>([])
+  const [testimonials, setTestimonials] = useState<TestimonialRecord[]>([])
   const [countries, setCountries] = useState<CountryRecord[]>([])
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -110,18 +91,21 @@ function NoticesPage() {
   const [statusTone, setStatusTone] = useState<'success' | 'error' | ''>('')
   const pageSize = 6
 
-  const loadNotices = async () => {
+  const loadTestimonials = async () => {
     setIsLoading(true)
 
     try {
-      const [records, countryRecords] = await Promise.all([getNews(), getActiveCountries()])
-      setNotices(records)
+      const [records, countryRecords] = await Promise.all([
+        getTestimonials(),
+        getActiveCountries(),
+      ])
+      setTestimonials(records)
       setCountries(countryRecords)
       setStatusMessage('')
       setStatusTone('')
     } catch (error) {
       setStatusMessage(
-        error instanceof Error ? error.message : 'No fue posible cargar las noticias.',
+        error instanceof Error ? error.message : 'No fue posible cargar los testimonios.',
       )
       setStatusTone('error')
     } finally {
@@ -130,12 +114,11 @@ function NoticesPage() {
   }
 
   useEffect(() => {
-    void loadNotices()
+    void loadTestimonials()
   }, [])
 
   const countryNameById = useMemo(
-    () =>
-      new Map(countries.map((country) => [String(country.id), country.nombre])),
+    () => new Map(countries.map((country) => [String(country.id), country.nombre])),
     [countries],
   )
 
@@ -155,60 +138,62 @@ function NoticesPage() {
     return ''
   }, [authUser, countryNameById])
 
-  const getCountryLabel = (notice: NewsRecord) => {
-    const normalizedLabel = getRawCountryLabel(notice)
+  const getCountryLabel = (testimonial: TestimonialRecord) => {
+    const normalizedLabel = getTestimonialCountryLabel(testimonial).trim()
 
-    if (normalizedLabel) {
+    if (normalizedLabel && normalizedLabel !== 'Sin pais') {
       return normalizedLabel
     }
 
-    return notice.pais_id != null
-      ? countryNameById.get(String(notice.pais_id)) ?? `Pais ${notice.pais_id}`
+    return testimonial.pais_id != null
+      ? countryNameById.get(String(testimonial.pais_id)) ?? `Pais ${testimonial.pais_id}`
       : !isSuperadmin(authUser) && currentUserCountryLabel
         ? currentUserCountryLabel
         : 'Sin país'
   }
 
-  const filteredNotices = useMemo(() => {
+  const filteredTestimonials = useMemo(() => {
     const normalizedQuery = search.trim().toLowerCase()
 
     if (!normalizedQuery) {
-      return notices
+      return testimonials
     }
 
-    return notices.filter((notice) => {
+    return testimonials.filter((testimonial) => {
       const candidates = [
-        notice.titulo ?? '',
-        notice.resumen ?? '',
-        notice.contenido ?? '',
-        notice.estado ?? '',
-        getCountryLabel(notice),
+        testimonial.nombre ?? '',
+        testimonial.cargo ?? '',
+        testimonial.empresa ?? '',
+        testimonial.contenido ?? '',
+        testimonial.estado ?? '',
+        testimonial.destacado ? 'destacado' : '',
+        getCountryLabel(testimonial),
       ]
 
       return candidates.some((candidate) =>
         candidate.toLowerCase().includes(normalizedQuery),
       )
     })
-  }, [notices, search, countries, authUser, currentUserCountryLabel])
+  }, [testimonials, search, countries, authUser, currentUserCountryLabel])
 
   useEffect(() => {
     setCurrentPage(1)
   }, [search])
 
-  const totalPages = Math.max(1, Math.ceil(filteredNotices.length / pageSize))
+  const totalPages = Math.max(1, Math.ceil(filteredTestimonials.length / pageSize))
   const paginationItems = getPaginationItems(totalPages, currentPage)
-  const paginatedNotices = filteredNotices.slice(
+  const paginatedTestimonials = filteredTestimonials.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize,
   )
 
-  const handleDelete = async (notice: NewsRecord) => {
-    if (notice.id == null) {
+  const handleDelete = async (testimonial: TestimonialRecord) => {
+    if (testimonial.id == null) {
       return
     }
 
     const confirmed = globalThis.confirm(
-      `Vas a eliminar la noticia "${notice.titulo ?? 'sin titulo'}". Esta accion no se puede deshacer.`,
+      `Vas a eliminar el testimonio de "${testimonial.nombre ?? 'sin nombre'}". Esta accion no se puede deshacer.`,
     )
 
     if (!confirmed) {
@@ -216,13 +201,13 @@ function NoticesPage() {
     }
 
     try {
-      await deleteNews(notice.id)
-      setStatusMessage('Noticia eliminada correctamente.')
+      await deleteTestimonial(testimonial.id)
+      setStatusMessage('Testimonio eliminado correctamente.')
       setStatusTone('success')
-      await loadNotices()
+      await loadTestimonials()
     } catch (error) {
       setStatusMessage(
-        error instanceof Error ? error.message : 'No fue posible eliminar la noticia.',
+        error instanceof Error ? error.message : 'No fue posible eliminar el testimonio.',
       )
       setStatusTone('error')
     }
@@ -235,11 +220,11 @@ function NoticesPage() {
 
       <section
         className="superadmin-shell"
-        aria-label="Gestion de noticias"
+        aria-label="Gestion de testimonios"
         style={{ ['--sidebar-width' as string]: isNavCollapsed ? '5.5rem' : '16rem' }}
       >
         <NavbarTwo
-          activeItem="noticias"
+          activeItem="testimonios"
           collapsed={isNavCollapsed}
           onToggleCollapse={() => setIsNavCollapsed((current) => !current)}
         />
@@ -247,18 +232,20 @@ function NoticesPage() {
         <div className="notices-directory">
           <section className="notices-directory__toolbar">
             <div className="notices-directory__heading">
-              <h1>Noticias</h1>
+              <h1>Testimonios</h1>
               <p>
-                {filteredNotices.length} registros
-                {filteredNotices.length > pageSize ? ` · Pagina ${currentPage} de ${totalPages}` : ''}
+                {filteredTestimonials.length} registros
+                {filteredTestimonials.length > pageSize
+                  ? ` · Pagina ${currentPage} de ${totalPages}`
+                  : ''}
               </p>
             </div>
 
-            <label className="notices-search" aria-label="Buscar noticias">
+            <label className="notices-search" aria-label="Buscar testimonios">
               <HiOutlineMagnifyingGlass aria-hidden="true" />
               <input
                 type="search"
-                placeholder="Buscar por título, resumen, estado o país"
+                placeholder="Buscar por nombre, cargo, empresa, estado o país"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
@@ -267,10 +254,10 @@ function NoticesPage() {
             <div className="notices-directory__actions">
               <a
                 className="notices-directory__button notices-directory__button--primary"
-                href="#/superadmin/noticias/crear"
+                href="#/superadmin/testimonios/crear"
               >
                 <HiOutlinePlus aria-hidden="true" />
-                Crear noticia
+                Crear testimonio
               </a>
             </div>
           </section>
@@ -283,58 +270,67 @@ function NoticesPage() {
 
           {isLoading ? (
             <section className="notices-directory__empty">
-              <h2>Cargando noticias</h2>
-              <p>Estamos trayendo las publicaciones disponibles para el panel.</p>
+              <h2>Cargando testimonios</h2>
+              <p>Estamos trayendo las historias disponibles para el panel.</p>
             </section>
-          ) : filteredNotices.length === 0 ? (
+          ) : filteredTestimonials.length === 0 ? (
             <section className="notices-directory__empty">
-              <h2>No encontramos noticias con ese filtro</h2>
-              <p>Puedes ajustar la busqueda o crear una nueva publicacion.</p>
+              <h2>No encontramos testimonios con ese filtro</h2>
+              <p>Puedes ajustar la busqueda o crear un nuevo testimonio.</p>
             </section>
           ) : (
             <section className="notices-table-shell">
               <div className="notices-table">
                 <div className="notices-table__head">
-                  <span>Título</span>
+                  <span>Nombre</span>
                   <span>País</span>
                   <span>Estado</span>
                   <span>Fecha</span>
                   <span>Acciones</span>
                 </div>
 
-                {paginatedNotices.map((notice, index) => {
-                  const status = getStatusTone(notice.estado ?? 'borrador')
+                {paginatedTestimonials.map((testimonial, index) => {
+                  const status = getStatusTone(testimonial.estado ?? 'borrador')
+                  const secondaryLine = [testimonial.cargo, testimonial.empresa]
+                    .filter(Boolean)
+                    .join(' · ')
 
                   return (
-                    <article className="notices-row" key={notice.id ?? `${notice.titulo}-${index}`}>
+                    <article
+                      className="notices-row"
+                      key={testimonial.id ?? `${testimonial.nombre}-${index}`}
+                    >
                       <div className="notices-row__identity">
-                        <strong>{notice.titulo ?? 'Noticia sin titulo'}</strong>
+                        <strong>
+                          {testimonial.nombre ?? 'Testimonio sin nombre'}
+                          {testimonial.destacado ? ' · Destacado' : ''}
+                        </strong>
                         <span className="notices-row__excerpt">
-                          {notice.resumen ?? 'Sin resumen disponible'}
+                          {secondaryLine || testimonial.contenido || 'Sin descripcion disponible'}
                         </span>
                       </div>
 
-                      <p className="notices-row__cell">{getCountryLabel(notice)}</p>
+                      <p className="notices-row__cell">{getCountryLabel(testimonial)}</p>
                       <div className="notices-row__cell">
                         <span className={`notices-row__badge notices-row__badge--${status}`}>
-                          {notice.estado ?? 'borrador'}
+                          {testimonial.estado ?? 'borrador'}
                         </span>
                       </div>
-                      <p className="notices-row__cell">{getFormattedDate(notice)}</p>
+                      <p className="notices-row__cell">{getFormattedDate(testimonial)}</p>
 
                       <div className="notices-row__actions">
                         <a
-                          href={`#/superadmin/noticias/editar/${notice.id ?? ''}`}
-                          aria-label={`Editar ${notice.titulo ?? 'noticia'}`}
-                          title="Editar noticia"
+                          href={`#/superadmin/testimonios/editar/${testimonial.id ?? ''}`}
+                          aria-label={`Editar ${testimonial.nombre ?? 'testimonio'}`}
+                          title="Editar testimonio"
                         >
                           <HiOutlinePencilSquare aria-hidden="true" />
                         </a>
                         <button
                           type="button"
-                          onClick={() => void handleDelete(notice)}
-                          aria-label={`Eliminar ${notice.titulo ?? 'noticia'}`}
-                          title="Eliminar noticia"
+                          onClick={() => void handleDelete(testimonial)}
+                          aria-label={`Eliminar ${testimonial.nombre ?? 'testimonio'}`}
+                          title="Eliminar testimonio"
                         >
                           <HiOutlineTrash aria-hidden="true" />
                         </button>
@@ -392,4 +388,4 @@ function NoticesPage() {
   )
 }
 
-export default NoticesPage
+export default TestimonialsAdminPage

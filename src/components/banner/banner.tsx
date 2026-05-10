@@ -10,7 +10,7 @@ function formatRoleLabel(role: string) {
   }
 
   if (normalizedRole === 'admin_pais') {
-    return 'Panel Admin Pais'
+    return 'Panel Admin País'
   }
 
   if (normalizedRole === 'editor') {
@@ -28,14 +28,14 @@ function getWelcomeCopy(role: string) {
   }
 
   if (normalizedRole === 'admin_pais') {
-    return 'Coordina publicaciones, usuarios y contexto operativo de tu pais.'
+    return 'Coordina publicaciones, usuarios y contexto operativo de tu país.'
   }
 
   if (normalizedRole === 'editor') {
     return 'Escribe, actualiza y cuida la calidad del contenido publicado.'
   }
 
-  return 'Bienvenido a tu espacio de gestion dentro de la plataforma.'
+  return 'Bienvenido a tu espacio de gestión dentro de la plataforma.'
 }
 
 function getDisplayName(user: AuthUser | null) {

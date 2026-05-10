@@ -49,7 +49,7 @@ const navItems = [
   {
     id: 'testimonios',
     label: 'Testimonios',
-    href: '#/superadmin#testimonios',
+    href: '#/superadmin/testimonios',
     icon: HiOutlineChatBubbleLeftRight,
   },
 ] as const
@@ -151,7 +151,7 @@ function NavbarTwo({
 
       <button className="navbar-two__logout" type="button" onClick={handleLogout}>
         <HiOutlinePower className="navbar-two__icon" aria-hidden="true" />
-        <span className="navbar-two__label">Cerrar sesion</span>
+        <span className="navbar-two__label">Cerrar sesión</span>
       </button>
     </aside>
   )
