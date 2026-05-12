@@ -624,6 +624,24 @@ function HomePrincipal() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot Service iframe */}
+      <iframe
+        src={import.meta.env.VITE_CHATBOT_URL || 'http://localhost:5173'}
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          right: 0,
+          width: '100%',
+          maxWidth: '650px',
+          height: '100%',
+          maxHeight: '800px',
+          border: 'none',
+          zIndex: 9999,
+          backgroundColor: 'transparent',
+        }}
+        title="Chatbot Latinoamerica"
+      />
     </div>
   )
 }
