@@ -142,7 +142,7 @@ function CrearNoticesPage() {
       setStatusMessage('Noticia creada correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/noticias'
+        globalThis.location.hash = '#/panel/noticias'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -177,7 +177,7 @@ function CrearNoticesPage() {
                 <h1>Crear noticia</h1>
                 <p>Asigna el país correcto para que la publicación salga en ese portal.</p>
               </div>
-              <a href="#/superadmin/noticias">Volver al listado</a>
+              <a href="#/panel/noticias">Volver al listado</a>
             </div>
 
             <form className="notice-form-grid" onSubmit={handleSubmit}>
@@ -293,7 +293,7 @@ function CrearNoticesPage() {
               ) : null}
 
               <div className="notice-form-actions">
-                <a href="#/superadmin/noticias">Cancelar</a>
+                <a href="#/panel/noticias">Cancelar</a>
                 <button type="submit" disabled={isSaving}>
                   {isSaving ? 'Creando...' : 'Guardar noticia'}
                 </button>

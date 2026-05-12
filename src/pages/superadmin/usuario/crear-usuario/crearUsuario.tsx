@@ -118,7 +118,7 @@ function CrearUsuarioPage() {
       setStatusTone('success')
       setForm(INITIAL_FORM)
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/usuarios'
+        globalThis.location.hash = '#/panel/usuarios'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -150,7 +150,7 @@ function CrearUsuarioPage() {
           <article className="user-form-card">
             <div className="user-form-card__header">
               <h1>Crear usuario</h1>
-              <a href="#/superadmin/usuarios">Volver al listado</a>
+              <a href="#/panel/usuarios">Volver al listado</a>
             </div>
 
             <form className="user-form-grid" onSubmit={handleSubmit}>
@@ -297,7 +297,7 @@ function CrearUsuarioPage() {
               ) : null}
 
               <div className="user-form-actions">
-                <a href="#/superadmin/usuarios">Cancelar</a>
+                <a href="#/panel/usuarios">Cancelar</a>
                 <button type="submit" disabled={isSaving}>
                   {isSaving ? 'Creando...' : 'Guardar usuario'}
                 </button>

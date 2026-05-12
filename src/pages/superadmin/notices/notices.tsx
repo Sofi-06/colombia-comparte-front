@@ -267,7 +267,7 @@ function NoticesPage() {
             <div className="notices-directory__actions">
               <a
                 className="notices-directory__button notices-directory__button--primary"
-                href="#/superadmin/noticias/crear"
+                href="#/panel/noticias/crear"
               >
                 <HiOutlinePlus aria-hidden="true" />
                 Crear noticia
@@ -324,7 +324,7 @@ function NoticesPage() {
 
                       <div className="notices-row__actions">
                         <a
-                          href={`#/superadmin/noticias/editar/${notice.id ?? ''}`}
+                          href={`#/panel/noticias/editar/${notice.id ?? ''}`}
                           aria-label={`Editar ${notice.titulo ?? 'noticia'}`}
                           title="Editar noticia"
                         >

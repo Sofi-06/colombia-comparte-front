@@ -24,7 +24,7 @@ function getDashboardRouteByRole(role: string) {
     normalizedRole === 'admin_pais' ||
     normalizedRole === 'editor'
   ) {
-    return '#/superadmin'
+    return '#/panel'
   }
 
   return '#/'

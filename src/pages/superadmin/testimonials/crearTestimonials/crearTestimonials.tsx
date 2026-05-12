@@ -160,7 +160,7 @@ function CrearTestimonialsPage() {
       setStatusMessage('Testimonio creado correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/testimonios'
+        globalThis.location.hash = '#/panel/testimonios'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -195,7 +195,7 @@ function CrearTestimonialsPage() {
                 <h1>Crear testimonio</h1>
                 <p>Completa la historia y asigna el país correcto para publicarla.</p>
               </div>
-              <a href="#/superadmin/testimonios">Volver al listado</a>
+              <a href="#/panel/testimonios">Volver al listado</a>
             </div>
 
             <form className="notice-form-grid" onSubmit={handleSubmit}>
@@ -363,7 +363,7 @@ function CrearTestimonialsPage() {
               ) : null}
 
               <div className="notice-form-actions">
-                <a href="#/superadmin/testimonios">Cancelar</a>
+                <a href="#/panel/testimonios">Cancelar</a>
                 <button type="submit" disabled={isSaving}>
                   {isSaving ? 'Creando...' : 'Guardar testimonio'}
                 </button>

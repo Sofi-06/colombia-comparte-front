@@ -171,7 +171,7 @@ function EditarNoticesPage() {
       setStatusMessage('Noticia actualizada correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/noticias'
+        globalThis.location.hash = '#/panel/noticias'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -206,7 +206,7 @@ function EditarNoticesPage() {
                 <h1>Editar noticia</h1>
                 <p>Ajusta el contenido y confirma el país de publicación antes de guardar.</p>
               </div>
-              <a href="#/superadmin/noticias">Volver al listado</a>
+              <a href="#/panel/noticias">Volver al listado</a>
             </div>
 
             {isLoading ? (
@@ -328,7 +328,7 @@ function EditarNoticesPage() {
                 ) : null}
 
                 <div className="notice-form-actions">
-                  <a href="#/superadmin/noticias">Cancelar</a>
+                  <a href="#/panel/noticias">Cancelar</a>
                   <button type="submit" disabled={isSaving}>
                     {isSaving ? 'Guardando...' : 'Actualizar noticia'}
                   </button>

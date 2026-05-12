@@ -254,7 +254,7 @@ function TestimonialsAdminPage() {
             <div className="notices-directory__actions">
               <a
                 className="notices-directory__button notices-directory__button--primary"
-                href="#/superadmin/testimonios/crear"
+                href="#/panel/testimonios/crear"
               >
                 <HiOutlinePlus aria-hidden="true" />
                 Crear testimonio
@@ -320,7 +320,7 @@ function TestimonialsAdminPage() {
 
                       <div className="notices-row__actions">
                         <a
-                          href={`#/superadmin/testimonios/editar/${testimonial.id ?? ''}`}
+                          href={`#/panel/testimonios/editar/${testimonial.id ?? ''}`}
                           aria-label={`Editar ${testimonial.nombre ?? 'testimonio'}`}
                           title="Editar testimonio"
                         >

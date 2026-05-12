@@ -200,7 +200,7 @@ function EditarTestimonialsPage() {
       setStatusMessage('Testimonio actualizado correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/testimonios'
+        globalThis.location.hash = '#/panel/testimonios'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -235,7 +235,7 @@ function EditarTestimonialsPage() {
                 <h1>Editar testimonio</h1>
                 <p>Actualiza la historia y confirma el país antes de guardar.</p>
               </div>
-              <a href="#/superadmin/testimonios">Volver al listado</a>
+              <a href="#/panel/testimonios">Volver al listado</a>
             </div>
 
             {isLoading ? (
@@ -409,7 +409,7 @@ function EditarTestimonialsPage() {
                 ) : null}
 
                 <div className="notice-form-actions">
-                  <a href="#/superadmin/testimonios">Cancelar</a>
+                  <a href="#/panel/testimonios">Cancelar</a>
                   <button type="submit" disabled={isSaving}>
                     {isSaving ? 'Guardando...' : 'Actualizar testimonio'}
                   </button>
