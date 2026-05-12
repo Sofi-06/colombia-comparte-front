@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   HiOutlineBars3CenterLeft,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineClipboardDocumentList,
   HiOutlineChevronDoubleLeft,
   HiOutlineNewspaper,
   HiOutlinePower,
@@ -22,37 +23,10 @@ import {
 import './navbartwo.css'
 
 type NavbarTwoProps = {
-  activeItem?: 'dashboard' | 'usuarios' | 'noticias' | 'testimonios'
+  activeItem?: 'dashboard' | 'usuarios' | 'noticias' | 'testimonios' | 'solicitudes'
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
-
-const navItems = [
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '#/superadmin',
-    icon: HiOutlineSquares2X2,
-  },
-  {
-    id: 'usuarios',
-    label: 'Usuarios',
-    href: '#/superadmin/usuarios',
-    icon: HiOutlineUserGroup,
-  },
-  {
-    id: 'noticias',
-    label: 'Noticias',
-    href: '#/superadmin/noticias',
-    icon: HiOutlineNewspaper,
-  },
-  {
-    id: 'testimonios',
-    label: 'Testimonios',
-    href: '#/superadmin/testimonios',
-    icon: HiOutlineChatBubbleLeftRight,
-  },
-] as const
 
 function NavbarTwo({
   activeItem = 'dashboard',
@@ -61,7 +35,45 @@ function NavbarTwo({
 }: NavbarTwoProps) {
   const authUser = useMemo(getStoredAuthUser, [])
   const normalizedRole = getNormalizedRole(authUser)
+  const canSeeUsers = normalizedRole === 'superadmin'
   const storedDashboardCountry = getStoredDashboardCountry()
+  const navItems = [
+    {
+      id: 'dashboard',
+      label: 'Panel',
+      href: '#/panel',
+      icon: HiOutlineSquares2X2,
+      visible: true,
+    },
+    {
+      id: 'usuarios',
+      label: 'Usuarios',
+      href: '#/panel/usuarios',
+      icon: HiOutlineUserGroup,
+      visible: canSeeUsers,
+    },
+    {
+      id: 'solicitudes',
+      label: 'Solicitudes',
+      href: '#/panel/solicitudes',
+      icon: HiOutlineClipboardDocumentList,
+      visible: true,
+    },
+    {
+      id: 'noticias',
+      label: 'Noticias',
+      href: '#/panel/noticias',
+      icon: HiOutlineNewspaper,
+      visible: true,
+    },
+    {
+      id: 'testimonios',
+      label: 'Testimonios',
+      href: '#/panel/testimonios',
+      icon: HiOutlineChatBubbleLeftRight,
+      visible: true,
+    },
+  ] as const
   const fallbackBrand = useMemo(
     () =>
       normalizedRole === 'superadmin'
@@ -127,7 +139,7 @@ function NavbarTwo({
 
       <nav className="navbar-two__nav">
         <ul className="navbar-two__menu">
-          {navItems.map((item) => {
+          {navItems.filter((item) => item.visible).map((item) => {
             const Icon = item.icon
             const isActive = item.id === activeItem
 

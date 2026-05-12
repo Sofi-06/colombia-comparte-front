@@ -6,7 +6,7 @@ function formatRoleLabel(role: string) {
   const normalizedRole = role.trim().toLowerCase()
 
   if (normalizedRole === 'superadmin') {
-    return 'Panel Superadmin'
+    return 'Panel general'
   }
 
   if (normalizedRole === 'admin_pais') {
@@ -24,7 +24,7 @@ function getWelcomeCopy(role: string) {
   const normalizedRole = role.trim().toLowerCase()
 
   if (normalizedRole === 'superadmin') {
-    return 'Administra noticias, testimonios y contenido de forma centralizada.'
+    return 'Coordina noticias, testimonios, solicitudes y configuracion general.'
   }
 
   if (normalizedRole === 'admin_pais') {
@@ -42,7 +42,7 @@ function getDisplayName(user: AuthUser | null) {
   const normalizedRole = user?.rol?.trim().toLowerCase() ?? ''
 
   if (normalizedRole === 'superadmin') {
-    return 'superadmin'
+    return user?.nombre?.trim() || user?.username?.trim() || 'Administrador'
   }
 
   return user?.nombre?.trim() || user?.username?.trim() || 'Usuario'

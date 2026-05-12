@@ -154,7 +154,7 @@ function EditarUsuarioPage() {
       setStatusMessage('Usuario actualizado correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/usuarios'
+        globalThis.location.hash = '#/panel/usuarios'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -214,7 +214,7 @@ function EditarUsuarioPage() {
           <article className="edit-user-card">
             <div className="edit-user-card__header">
               <h1>Editar usuario</h1>
-              <a href="#/superadmin/usuarios">Volver al listado</a>
+              <a href="#/panel/usuarios">Volver al listado</a>
             </div>
 
             {isLoading ? (
@@ -346,7 +346,7 @@ function EditarUsuarioPage() {
                 ) : null}
 
                 <div className="edit-user-actions">
-                  <a href="#/superadmin/usuarios">Cancelar</a>
+                  <a href="#/panel/usuarios">Cancelar</a>
                   <button type="submit" disabled={isSaving}>
                     {isSaving ? 'Guardando...' : 'Actualizar usuario'}
                   </button>
