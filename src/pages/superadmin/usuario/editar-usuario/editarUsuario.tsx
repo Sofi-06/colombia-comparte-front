@@ -6,6 +6,7 @@ import {
   HiOutlineIdentification,
   HiOutlineKey,
   HiOutlinePencilSquare,
+  HiOutlineQuestionMarkCircle,
   HiOutlineUser,
   HiOutlineUserCircle,
 } from 'react-icons/hi2'
@@ -26,7 +27,8 @@ type FormState = {
   username: string
   password: string
   rol_id: string
-  pais_id: string
+  pregunta_seguridad: string
+  respuesta_seguridad: string
 }
 
 const INITIAL_FORM: FormState = {
@@ -37,6 +39,8 @@ const INITIAL_FORM: FormState = {
   password: '',
   rol_id: '',
   pais_id: '',
+  pregunta_seguridad: '',
+  respuesta_seguridad: '',
 }
 
 function isSuperadminRole(roleValue: string) {
@@ -60,6 +64,11 @@ function toPayload(form: FormState): UserPayload {
 
   if (!isSuperadminRole(form.rol_id) && form.pais_id.trim()) {
     payload.pais_id = Number(form.pais_id)
+  }
+
+  if (form.pregunta_seguridad.trim() && form.respuesta_seguridad.trim()) {
+    payload.pregunta_seguridad = form.pregunta_seguridad.trim()
+    payload.respuesta_seguridad = form.respuesta_seguridad.trim()
   }
 
   return payload
@@ -105,6 +114,8 @@ function EditarUsuarioPage() {
           password: '',
           rol_id: getRoleValueFromRecord(selectedUser.rol_id, selectedUser.rol),
           pais_id: selectedUser.pais_id != null ? String(selectedUser.pais_id) : '',
+          pregunta_seguridad: selectedUser.pregunta_seguridad ?? '',
+          respuesta_seguridad: '',
         })
       } catch (error) {
         setStatusMessage(
@@ -336,6 +347,36 @@ function EditarUsuarioPage() {
                       ))}
                     </select>
                     <HiMiniChevronDown className="edit-user-control__chevron" aria-hidden="true" />
+                  </div>
+                </label>
+
+                <label className="edit-user-field">
+                  <span>Pregunta de Seguridad</span>
+                  <div className="edit-user-control">
+                    <HiOutlineQuestionMarkCircle aria-hidden="true" />
+                    <input
+                      type="text"
+                      name="pregunta_seguridad"
+                      placeholder="¿Cuál es tu mascota favorita?"
+                      value={form.pregunta_seguridad}
+                      onChange={handleInputChange}
+                      maxLength={200}
+                    />
+                  </div>
+                </label>
+
+                <label className="edit-user-field">
+                  <span>Respuesta de Seguridad</span>
+                  <div className="edit-user-control">
+                    <HiOutlineKey aria-hidden="true" />
+                    <input
+                      type="text"
+                      name="respuesta_seguridad"
+                      placeholder="Escriba la respuesta"
+                      value={form.respuesta_seguridad}
+                      onChange={handleInputChange}
+                      maxLength={200}
+                    />
                   </div>
                 </label>
 

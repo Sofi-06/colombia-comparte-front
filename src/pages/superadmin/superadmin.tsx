@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Banner from '../../components/banner/banner'
 import NavbarTwo from '../../components/navbar2/navbartwo'
+import Metrics from '../../components/metrics/metrics'
 import './superadmin.css'
 
 function Superadmin() {
@@ -24,12 +25,8 @@ function Superadmin() {
 
         <div className="superadmin-content">
           <Banner />
-
           <section className="superadmin-card">
-            <p className="superadmin-card__note">
-              La gestion de contrasena y recuperacion de acceso se realiza desde la pantalla de
-              login. Este espacio queda reservado para accesos y modulos administrativos.
-            </p>
+            <Metrics />
           </section>
         </div>
       </section>

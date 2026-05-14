@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
+import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
 import type { CountryConfig } from '../../config/countries'
 import {
   getPublicTestimonials,
@@ -71,6 +72,7 @@ type TestimonialsProps = {
 }
 
 function Testimonials({ country }: TestimonialsProps) {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
   const [dynamicTestimonials, setDynamicTestimonials] = useState<TestimonialRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -136,7 +138,7 @@ function Testimonials({ country }: TestimonialsProps) {
 
   return (
     <div className="testimonials-page">
-      <Navbar country={country} />
+      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
 
       <main>
         <section className="testimonials-page__hero">
@@ -242,7 +244,14 @@ function Testimonials({ country }: TestimonialsProps) {
         </section>
       </main>
 
-      <Footer country={country} />
+      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <PublicRequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        initialCountrySlug={country.slug}
+        title={`Solicita apoyo en ${country.name}`}
+        subtitle="Comparte tus datos y te contactaremos desde el equipo local."
+      />
     </div>
   )
 }

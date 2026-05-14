@@ -30,6 +30,8 @@ export type UserPayload = {
   password?: string
   rol_id: number
   pais_id?: number | null
+  pregunta_seguridad?: string
+  respuesta_seguridad?: string
 }
 
 type ApiRequestOptions = {

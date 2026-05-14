@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from 'react'
 import {
   FaBuilding,
   FaCircleCheck,
@@ -11,6 +11,9 @@ import {
   FaTiktok,
   FaYoutube,
 } from 'react-icons/fa6'
+import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
+import { publicCountryOptions } from '../../config/countries'
+import { createContactRequest } from '../../services/contactRequests'
 import alpinaLogo from '../../assets/Alpina_S.A._logo.svg.png'
 import argentinaLogo from '../../assets/Argentina Co N.png'
 import cencosudLogo from '../../assets/Cencosud_logo.svg.png'
@@ -186,6 +189,18 @@ const socialLinks = [
 ]
 
 function HomePrincipal() {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [contactForm, setContactForm] = useState({
+    nombre: '',
+    telefono: '',
+    pais_id: '',
+    finalidad: 'Servicio',
+    correo: '',
+    mensaje: '',
+  })
+  const [isContactSaving, setIsContactSaving] = useState(false)
+  const [contactStatusMessage, setContactStatusMessage] = useState('')
+  const [contactStatusTone, setContactStatusTone] = useState<'success' | 'error' | ''>('')
   const [impactVisible, setImpactVisible] = useState(false)
   const [impactCounts, setImpactCounts] = useState(() => impactStats.map(() => 0))
   const [teamExpanded, setTeamExpanded] = useState(false)
@@ -236,6 +251,56 @@ function HomePrincipal() {
 
     return () => globalThis.cancelAnimationFrame(frameId)
   }, [impactVisible])
+
+  const handleContactFieldChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target
+    setContactForm((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setIsContactSaving(true)
+    setContactStatusMessage('')
+    setContactStatusTone('')
+
+    if (!contactForm.pais_id) {
+      setContactStatusMessage('Selecciona el pais para registrar la solicitud.')
+      setContactStatusTone('error')
+      setIsContactSaving(false)
+      return
+    }
+
+    try {
+      await createContactRequest({
+        pais_id: Number(contactForm.pais_id),
+        nombre: contactForm.nombre.trim(),
+        correo: contactForm.correo.trim(),
+        telefono: contactForm.telefono.trim(),
+        finalidad: contactForm.finalidad.trim(),
+        mensaje: contactForm.mensaje.trim(),
+      })
+
+      setContactStatusMessage('Solicitud enviada correctamente. Te contactaremos pronto.')
+      setContactStatusTone('success')
+      setContactForm({
+        nombre: '',
+        telefono: '',
+        pais_id: '',
+        finalidad: 'Servicio',
+        correo: '',
+        mensaje: '',
+      })
+    } catch (error) {
+      setContactStatusMessage(
+        error instanceof Error ? error.message : 'No fue posible enviar la solicitud.',
+      )
+      setContactStatusTone('error')
+    } finally {
+      setIsContactSaving(false)
+    }
+  }
 
   return (
     <div className="home-principal" id="top">
@@ -481,9 +546,13 @@ function HomePrincipal() {
                 Vincula tu compania a nuestros programas e impulsa el bienestar de
                 tus colaboradores.
               </p>
-              <a className="support-card-homeprincipal__button" href="#contactenos">
+              <button
+                type="button"
+                className="support-card-homeprincipal__button"
+                onClick={() => setIsRequestModalOpen(true)}
+              >
                 Mas informacion
-              </a>
+              </button>
             </article>
 
             <article className="support-card-homeprincipal support-card-homeprincipal--donation">
@@ -520,9 +589,13 @@ function HomePrincipal() {
                 </div>
               </div>
 
-              <a className="support-card-homeprincipal__outline" href="#contactenos">
+              <button
+                type="button"
+                className="support-card-homeprincipal__outline"
+                onClick={() => setIsRequestModalOpen(true)}
+              >
                 Donar con tarjeta
-              </a>
+              </button>
               <p className="support-card-homeprincipal__note">
                 Tambien aceptamos tarjetas de credito y debito
               </p>
@@ -536,50 +609,102 @@ function HomePrincipal() {
             <p>Pronto uno de nuestros gerentes regionales se pondra en contacto contigo.</p>
           </div>
 
-          <form className="contact-form-homeprincipal">
+          <form className="contact-form-homeprincipal" onSubmit={handleContactSubmit}>
             <div className="contact-form-homeprincipal__grid">
               <label className="contact-form-homeprincipal__field">
                 <span>Nombre *</span>
-                <input type="text" placeholder="Tu nombre" />
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Tu nombre"
+                  value={contactForm.nombre}
+                  onChange={handleContactFieldChange}
+                  required
+                />
               </label>
 
               <label className="contact-form-homeprincipal__field">
-                <span>Apellido</span>
-                <input type="text" placeholder="Tu apellido" />
-              </label>
-
-              <label className="contact-form-homeprincipal__field">
-                <span>Telefono</span>
-                <input type="tel" placeholder="+57 300 123 4567" />
+                <span>Telefono *</span>
+                <input
+                  type="tel"
+                  name="telefono"
+                  placeholder="+57 300 123 4567"
+                  value={contactForm.telefono}
+                  onChange={handleContactFieldChange}
+                  required
+                />
               </label>
 
               <label className="contact-form-homeprincipal__field">
                 <span>País</span>
-                <select defaultValue="">
+                <select
+                  name="pais_id"
+                  value={contactForm.pais_id}
+                  onChange={handleContactFieldChange}
+                  required
+                >
                   <option value="" disabled>
                     Selecciona tu país
                   </option>
-                  <option>Colombia</option>
-                  <option>Ecuador</option>
-                  <option>Chile</option>
-                  <option>Argentina</option>
-                  <option>Otro</option>
+                  {publicCountryOptions.map((country) => (
+                    <option key={country.slug} value={country.id}>
+                      {country.nombre}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="contact-form-homeprincipal__field">
+                <span>Finalidad *</span>
+                <select
+                  name="finalidad"
+                  value={contactForm.finalidad}
+                  onChange={handleContactFieldChange}
+                  required
+                >
+                  <option value="Servicio">Servicio</option>
+                  <option value="Programa EDIFICA">Programa EDIFICA</option>
+                  <option value="Shows y conferencias">Shows y conferencias</option>
                 </select>
               </label>
             </div>
 
             <label className="contact-form-homeprincipal__field">
               <span>Correo electronico *</span>
-              <input type="email" placeholder="tucorreo@ejemplo.com" />
+              <input
+                type="email"
+                name="correo"
+                placeholder="tucorreo@ejemplo.com"
+                value={contactForm.correo}
+                onChange={handleContactFieldChange}
+                required
+              />
             </label>
 
             <label className="contact-form-homeprincipal__field">
-              <span>En que podemos ayudarte? *</span>
-              <textarea placeholder="Cuentanos como podemos ayudarte..." rows={6} />
+              <span>Mensaje</span>
+              <textarea
+                name="mensaje"
+                placeholder="Cuentanos como podemos ayudarte..."
+                rows={6}
+                value={contactForm.mensaje}
+                onChange={handleContactFieldChange}
+              />
             </label>
 
-            <button type="submit" className="contact-form-homeprincipal__submit">
-              Enviar mensaje
+            {contactStatusMessage ? (
+              <p
+                className={`contact-form-homeprincipal__status contact-form-homeprincipal__status--${contactStatusTone}`}
+              >
+                {contactStatusMessage}
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
+              className="contact-form-homeprincipal__submit"
+              disabled={isContactSaving}
+            >
+              {isContactSaving ? 'Enviando solicitud...' : 'Enviar solicitud'}
             </button>
           </form>
         </section>
@@ -640,6 +765,12 @@ function HomePrincipal() {
           zIndex: 50,
           pointerEvents: 'none'
         }}
+      />
+      <PublicRequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        title="Solicitud para Latinoamerica Comparte"
+        subtitle="Completa el formulario y direccionaremos tu solicitud al pais o equipo regional correspondiente."
       />
     </div>
   )

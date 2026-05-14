@@ -8,6 +8,7 @@ export type CountrySlug = 'colombia' | 'chile' | 'ecuador' | 'argentina'
 
 export type CountryConfig = {
   slug: CountrySlug
+  id: number
   name: string
   brandName: string
   logo: string
@@ -26,6 +27,7 @@ export type DashboardBrand = {
 export const countryConfigs: Record<CountrySlug, CountryConfig> = {
   colombia: {
     slug: 'colombia',
+    id: 1,
     name: 'Colombia',
     brandName: 'Colombia Comparte',
     logo: colombiaLogo,
@@ -36,6 +38,7 @@ export const countryConfigs: Record<CountrySlug, CountryConfig> = {
   },
   chile: {
     slug: 'chile',
+    id: 2,
     name: 'Chile',
     brandName: 'Chile Comparte',
     logo: chileLogo,
@@ -46,6 +49,7 @@ export const countryConfigs: Record<CountrySlug, CountryConfig> = {
   },
   ecuador: {
     slug: 'ecuador',
+    id: 3,
     name: 'Ecuador',
     brandName: 'Ecuador Comparte',
     logo: ecuadorLogo,
@@ -56,6 +60,7 @@ export const countryConfigs: Record<CountrySlug, CountryConfig> = {
   },
   argentina: {
     slug: 'argentina',
+    id: 4,
     name: 'Argentina',
     brandName: 'Argentina Comparte',
     logo: argentinaLogo,
@@ -65,6 +70,12 @@ export const countryConfigs: Record<CountrySlug, CountryConfig> = {
     shortNav: true,
   },
 }
+
+export const publicCountryOptions = Object.values(countryConfigs).map((country) => ({
+  id: country.id,
+  slug: country.slug,
+  nombre: country.name,
+}))
 
 export function getCountryConfig(slug?: string | null) {
   if (!slug) {

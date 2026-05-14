@@ -159,6 +159,10 @@ export function isSuperadmin(user: AuthUser | null) {
   return getNormalizedRole(user) === 'superadmin'
 }
 
+export function isEditor(user: AuthUser | null) {
+  return getNormalizedRole(user) === 'editor'
+}
+
 function getAuthHeaders() {
   const token = globalThis.localStorage.getItem('authToken')
 

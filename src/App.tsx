@@ -18,6 +18,9 @@ import CrearUsuarioPage from './pages/superadmin/usuario/crear-usuario/crearUsua
 import EditarUsuarioPage from './pages/superadmin/usuario/editar-usuario/editarUsuario'
 import UsersPage from './pages/superadmin/usuario/usuario'
 import Testimonials from './pages/testimonials/testimonials'
+import CountriesPage from './pages/superadmin/countries/countries'
+import CrearPaisPage from './pages/superadmin/countries/crearPais/crearPais'
+import EditarPaisPage from './pages/superadmin/countries/editarPais/editarPais'
 
 type Page =
   | 'principal'
@@ -38,6 +41,9 @@ type Page =
   | 'users'
   | 'create-user'
   | 'edit-user'
+  | 'countries'
+  | 'create-country'
+  | 'edit-country'
 
 type AppRoute = {
   countrySlug: string
@@ -69,6 +75,10 @@ function getCurrentRoute(): AppRoute {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-testimonial' : 'login' }
   }
 
+  if (hash.startsWith('#/panel/paises/crear') || hash.startsWith('#/superadmin/paises/crear')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'create-country' : 'login' }
+  }
+
   if (hash.startsWith('#/panel/usuarios/editar/') || hash.startsWith('#/superadmin/usuarios/editar/')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-user' : 'login' }
   }
@@ -85,6 +95,10 @@ function getCurrentRoute(): AppRoute {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-testimonial' : 'login' }
   }
 
+  if (hash.startsWith('#/panel/paises/editar/') || hash.startsWith('#/superadmin/paises/editar/')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'edit-country' : 'login' }
+  }
+
   if (hash.startsWith('#/panel/solicitudes') || hash.startsWith('#/superadmin/solicitudes')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'requests' : 'login' }
   }
@@ -95,6 +109,10 @@ function getCurrentRoute(): AppRoute {
 
   if (hash.startsWith('#/panel/testimonios') || hash.startsWith('#/superadmin/testimonios')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'admin-testimonials' : 'login' }
+  }
+
+  if (hash.startsWith('#/panel/paises') || hash.startsWith('#/superadmin/paises')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'countries' : 'login' }
   }
 
   if (hash.startsWith('#/panel/usuarios') || hash.startsWith('#/superadmin/usuarios')) {
@@ -174,6 +192,18 @@ function App() {
 
   if (currentRoute.page === 'users') {
     return <UsersPage />
+  }
+
+  if (currentRoute.page === 'countries') {
+    return <CountriesPage />
+  }
+
+  if (currentRoute.page === 'create-country') {
+    return <CrearPaisPage />
+  }
+
+  if (currentRoute.page === 'edit-country') {
+    return <EditarPaisPage />
   }
 
   if (currentRoute.page === 'requests') {

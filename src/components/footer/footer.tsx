@@ -22,9 +22,10 @@ const contactItems = [
 
 type FooterProps = {
   country: CountryConfig
+  onOpenRequestModal?: () => void
 }
 
-function Footer({ country }: FooterProps) {
+function Footer({ country, onOpenRequestModal }: FooterProps) {
   const exploreColumns = country.shortNav
     ? [
         [
@@ -88,7 +89,17 @@ function Footer({ country }: FooterProps) {
                 <ul key={`column-${index}`} className="footer__links">
                   {column.map((item) => (
                     <li key={item.label}>
-                      <a href={item.href}>{item.label}</a>
+                      {item.label === 'Solicitudes' || item.label === 'Donaciones' ? (
+                        <button
+                          type="button"
+                          className="footer__link-button"
+                          onClick={onOpenRequestModal}
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <a href={item.href}>{item.label}</a>
+                      )}
                     </li>
                   ))}
                 </ul>

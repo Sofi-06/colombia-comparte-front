@@ -4,11 +4,10 @@ import {
   HiOutlineChevronRight,
   HiOutlineMagnifyingGlass,
   HiOutlinePencilSquare,
-  HiOutlinePlus,
   HiOutlineTrash,
 } from 'react-icons/hi2'
 import NavbarTwo from '../../../../components/navbar2/navbartwo'
-import { getStoredAuthUser } from '../../../../services/auth'
+import { getStoredAuthUser, isEditor } from '../../../../services/auth'
 import {
   deleteContactRequest,
   getContactRequestCountryLabel,
@@ -79,6 +78,7 @@ function formatDate(value?: string | null) {
 
 function RequestsPage() {
   const authUser = useMemo(getStoredAuthUser, [])
+  const editorRole = isEditor(authUser)
   const normalizedRole = (authUser?.rol ?? '').trim().toLowerCase()
   const canManageRequests = normalizedRole === 'superadmin' || normalizedRole === 'admin_pais'
   const [requests, setRequests] = useState<ContactRequestRecord[]>([])
@@ -109,8 +109,17 @@ function RequestsPage() {
   }
 
   useEffect(() => {
+    if (editorRole) {
+      globalThis.location.replace('#/panel')
+      return
+    }
+
     void loadRequests()
-  }, [])
+  }, [editorRole])
+
+  if (editorRole) {
+    return null
+  }
 
   const filteredRequests = useMemo(() => {
     const normalizedQuery = search.trim().toLowerCase()
@@ -250,17 +259,7 @@ function RequestsPage() {
               />
             </label>
 
-            <div className="notices-directory__actions">
-              {canManageRequests ? (
-                <a
-                  className="notices-directory__button notices-directory__button--primary"
-                  href="#/panel/solicitudes/crear"
-                >
-                  <HiOutlinePlus aria-hidden="true" />
-                  Crear solicitud
-                </a>
-              ) : null}
-            </div>
+            <div className="notices-directory__actions" />
           </section>
 
           {statusMessage ? (

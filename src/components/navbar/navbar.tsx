@@ -3,9 +3,10 @@ import './navbar.css'
 
 type NavbarProps = {
   country: CountryConfig
+  onOpenRequestModal?: () => void
 }
 
-function Navbar({ country }: NavbarProps) {
+function Navbar({ country, onOpenRequestModal }: NavbarProps) {
   const navItems = country.shortNav
     ? [
         { label: 'Noticias', href: country.newsPath },
@@ -53,19 +54,19 @@ function Navbar({ country }: NavbarProps) {
       </nav>
 
       {country.shortNav ? (
-        <a className="navbar__donate" href={`${country.homePath}#contacto`}>
+        <button type="button" className="navbar__donate" onClick={onOpenRequestModal}>
           <span>SOLICITAR</span>
-          <span className="navbar__donate-icon" aria-hidden="true">
-            {'>'}
-          </span>
-        </a>
-      ) : (
-        <a className="navbar__donate" href={`${country.homePath}#donaciones`}>
-          <span>DONACIONES</span>
           <span className="navbar__donate-icon" aria-hidden="true">
             {'\u2665'}
           </span>
-        </a>
+        </button>
+      ) : (
+        <button type="button" className="navbar__donate" onClick={onOpenRequestModal}>
+          <span>SOLICITUD</span>
+          <span className="navbar__donate-icon" aria-hidden="true">
+            {'\u2665'}
+          </span>
+        </button>
       )}
     </header>
   )

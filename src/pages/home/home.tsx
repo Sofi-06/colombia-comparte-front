@@ -9,6 +9,7 @@ import { FiCalendar } from 'react-icons/fi'
 import { LuBuilding2, LuHandshake, LuRocket } from 'react-icons/lu'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
+import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
 import type { CountryConfig } from '../../config/countries'
 import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../services/news'
 import { getPublicTestimonials, type TestimonialRecord } from '../../services/testimonials'
@@ -284,6 +285,7 @@ type HomeProps = {
 }
 
 function Home({ country }: HomeProps) {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [currentNews, setCurrentNews] = useState(0)
@@ -486,7 +488,7 @@ function Home({ country }: HomeProps) {
 
   return (
     <div className="home">
-      <Navbar country={country} />
+      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
 
       <main>
         <section className="hero-carousel" id="inicio" aria-label="Destacados">
@@ -902,7 +904,14 @@ function Home({ country }: HomeProps) {
         </section>
       </main>
 
-      <Footer country={country} />
+      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <PublicRequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        initialCountrySlug={country.slug}
+        title={country.shortNav ? `Solicitud en ${country.name}` : 'Solicitud en Colombia'}
+        subtitle="Completa el formulario y nuestro equipo te respondera desde este mismo pais."
+      />
     </div>
   )
 }

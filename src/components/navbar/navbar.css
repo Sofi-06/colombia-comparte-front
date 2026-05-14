@@ -98,6 +98,8 @@
   padding: 1.05rem 1.35rem;
   background: #4237a3;
   color: #ffffff;
+  border: 0;
+  cursor: pointer;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 700;

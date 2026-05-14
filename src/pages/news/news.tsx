@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Navbar from '../../components/navbar/navbar'
 import Footer from '../../components/footer/footer'
+import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
 import type { CountryConfig } from '../../config/countries'
 import {
   getNewsPublicationDate,
@@ -64,6 +65,7 @@ type NewsProps = {
 }
 
 function News({ country }: NewsProps) {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
   const [dynamicNewsItems, setDynamicNewsItems] = useState<NewsRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -123,7 +125,7 @@ function News({ country }: NewsProps) {
 
   return (
     <div className="news-page">
-      <Navbar country={country} />
+      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
 
       <main>
         <section className="news-page__hero">
@@ -228,7 +230,14 @@ function News({ country }: NewsProps) {
         </section>
       </main>
 
-      <Footer country={country} />
+      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <PublicRequestModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        initialCountrySlug={country.slug}
+        title={`Solicita apoyo en ${country.name}`}
+        subtitle="Completa el formulario y nuestro equipo te contactara sin salir del sitio."
+      />
     </div>
   )
 }
