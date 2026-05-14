@@ -27,8 +27,8 @@ function Superadmin() {
 
           <section className="superadmin-card">
             <p className="superadmin-card__note">
-              Este espacio queda listo para mostrar metricas, accesos y controles
-              segun el rol con el que iniciaste sesion.
+              La gestion de contrasena y recuperacion de acceso se realiza desde la pantalla de
+              login. Este espacio queda reservado para accesos y modulos administrativos.
             </p>
           </section>
         </div>

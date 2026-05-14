@@ -33,8 +33,8 @@ export type UserPayload = {
 }
 
 type ApiRequestOptions = {
-  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
-  body?: UserPayload
+  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
+  body?: UserPayload | { nueva_password: string }
 }
 
 function getAuthHeaders() {
@@ -126,5 +126,12 @@ export async function updateUser(id: number | string, user: UserPayload) {
 export async function deleteUser(id: number | string) {
   return request<unknown>(`/${id}`, {
     method: 'DELETE',
+  })
+}
+
+export async function updateUserPassword(id: number | string, nueva_password: string) {
+  return request<{ message?: string }>(`/${id}/password`, {
+    method: 'PUT',
+    body: { nueva_password },
   })
 }

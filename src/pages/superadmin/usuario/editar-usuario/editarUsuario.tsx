@@ -11,7 +11,7 @@ import {
 } from 'react-icons/hi2'
 import NavbarTwo from '../../../../components/navbar2/navbartwo'
 import { getActiveCountries, type CountryRecord } from '../../../../services/countries'
-import { getUsers, type UserPayload, updateUser } from '../../../../services/users'
+import { getUsers, type UserPayload, updateUser, updateUserPassword } from '../../../../services/users'
 import {
   getRoleIdFromValue,
   getRoleValueFromRecord,
@@ -58,10 +58,6 @@ function toPayload(form: FormState): UserPayload {
     pais_id: null,
   }
 
-  if (form.password.trim()) {
-    payload.password = form.password
-  }
-
   if (!isSuperadminRole(form.rol_id) && form.pais_id.trim()) {
     payload.pais_id = Number(form.pais_id)
   }
@@ -76,8 +72,11 @@ function EditarUsuarioPage() {
   const [countries, setCountries] = useState<CountryRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isSavingPassword, setIsSavingPassword] = useState(false)
   const [statusMessage, setStatusMessage] = useState('')
   const [statusTone, setStatusTone] = useState<'success' | 'error' | ''>('')
+  const [passwordStatusMessage, setPasswordStatusMessage] = useState('')
+  const [passwordStatusTone, setPasswordStatusTone] = useState<'success' | 'error' | ''>('')
   const requiresCountry = form.rol_id !== '' && !isSuperadminRole(form.rol_id)
 
   useEffect(() => {
@@ -144,7 +143,7 @@ function EditarUsuarioPage() {
     setStatusTone('')
 
     if (requiresCountry && !form.pais_id) {
-      setStatusMessage('Selecciona un pais para roles distintos de superadmin.')
+      setStatusMessage('Selecciona un país para roles distintos de superadmin.')
       setStatusTone('error')
       setIsSaving(false)
       return
@@ -155,7 +154,7 @@ function EditarUsuarioPage() {
       setStatusMessage('Usuario actualizado correctamente.')
       setStatusTone('success')
       globalThis.setTimeout(() => {
-        globalThis.location.hash = '#/superadmin/usuarios'
+        globalThis.location.hash = '#/panel/usuarios'
       }, 900)
     } catch (error) {
       setStatusMessage(
@@ -164,6 +163,34 @@ function EditarUsuarioPage() {
       setStatusTone('error')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handlePasswordSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (!form.password.trim()) {
+      setPasswordStatusMessage('Escribe una nueva contraseña para este usuario.')
+      setPasswordStatusTone('error')
+      return
+    }
+
+    setIsSavingPassword(true)
+    setPasswordStatusMessage('')
+    setPasswordStatusTone('')
+
+    try {
+      await updateUserPassword(userId, form.password.trim())
+      setPasswordStatusMessage('Contraseña actualizada correctamente.')
+      setPasswordStatusTone('success')
+      setForm((current) => ({ ...current, password: '' }))
+    } catch (error) {
+      setPasswordStatusMessage(
+        error instanceof Error ? error.message : 'No fue posible actualizar la contraseña.',
+      )
+      setPasswordStatusTone('error')
+    } finally {
+      setIsSavingPassword(false)
     }
   }
 
@@ -187,11 +214,11 @@ function EditarUsuarioPage() {
           <article className="edit-user-card">
             <div className="edit-user-card__header">
               <h1>Editar usuario</h1>
-              <a href="#/superadmin/usuarios">Volver al listado</a>
+              <a href="#/panel/usuarios">Volver al listado</a>
             </div>
 
             {isLoading ? (
-              <p className="edit-user-status">Cargando informacion del usuario...</p>
+              <p className="edit-user-status">Cargando información del usuario...</p>
             ) : (
               <form className="edit-user-grid" onSubmit={handleSubmit}>
                 <label className="edit-user-field">
@@ -266,23 +293,6 @@ function EditarUsuarioPage() {
                 </label>
 
                 <label className="edit-user-field">
-                  <span>Nueva contrasena</span>
-                  <div className="edit-user-control">
-                    <HiOutlineKey aria-hidden="true" />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Dejala vacia si no cambia"
-                      value={form.password}
-                      onChange={handleInputChange}
-                      minLength={6}
-                      pattern="(?=.*[A-Za-z])(?=.*\d).{6,}"
-                      title="Si cambias la contrasena, usa minimo 6 caracteres, una letra y un numero."
-                    />
-                  </div>
-                </label>
-
-                <label className="edit-user-field">
                   <span>Rol</span>
                   <div className="edit-user-control edit-user-control--select">
                     <HiOutlinePencilSquare aria-hidden="true" />
@@ -304,7 +314,7 @@ function EditarUsuarioPage() {
                 </label>
 
                 <label className="edit-user-field">
-                  <span>Pais</span>
+                  <span>País</span>
                   <div className="edit-user-control edit-user-control--select">
                     <HiOutlineGlobeAlt aria-hidden="true" />
                     <select
@@ -317,7 +327,7 @@ function EditarUsuarioPage() {
                       <option value="">
                         {isSuperadminRole(form.rol_id)
                           ? 'No aplica para superadmin'
-                          : 'Selecciona un pais'}
+                          : 'Selecciona un país'}
                       </option>
                       {countries.map((country) => (
                         <option key={country.id} value={country.id}>
@@ -336,13 +346,51 @@ function EditarUsuarioPage() {
                 ) : null}
 
                 <div className="edit-user-actions">
-                  <a href="#/superadmin/usuarios">Cancelar</a>
+                  <a href="#/panel/usuarios">Cancelar</a>
                   <button type="submit" disabled={isSaving}>
                     {isSaving ? 'Guardando...' : 'Actualizar usuario'}
                   </button>
                 </div>
               </form>
             )}
+
+            {!isLoading ? (
+              <form className="edit-user-password-card" onSubmit={handlePasswordSubmit}>
+                <div className="edit-user-password-card__header">
+                  <h2>Cambiar contraseña del usuario</h2>
+                  <p>Usa este bloque solo si necesitas asignar una nueva contraseña.</p>
+                </div>
+
+                <label className="edit-user-field">
+                  <span>Nueva contraseña</span>
+                  <div className="edit-user-control">
+                    <HiOutlineKey aria-hidden="true" />
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Escribe la nueva contraseña"
+                      value={form.password}
+                      onChange={handleInputChange}
+                      minLength={6}
+                      pattern="(?=.*[A-Za-z])(?=.*\d).{6,}"
+                      title="Usa minimo 6 caracteres, una letra y un numero."
+                    />
+                  </div>
+                </label>
+
+                {passwordStatusMessage ? (
+                  <p className={`edit-user-status edit-user-status--${passwordStatusTone}`}>
+                    {passwordStatusMessage}
+                  </p>
+                ) : null}
+
+                <div className="edit-user-password-card__actions">
+                  <button type="submit" disabled={isSavingPassword}>
+                    {isSavingPassword ? 'Actualizando...' : 'Actualizar contraseña'}
+                  </button>
+                </div>
+              </form>
+            ) : null}
           </article>
         </div>
       </section>

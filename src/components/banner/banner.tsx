@@ -6,11 +6,11 @@ function formatRoleLabel(role: string) {
   const normalizedRole = role.trim().toLowerCase()
 
   if (normalizedRole === 'superadmin') {
-    return 'Panel Superadmin'
+    return 'Panel general'
   }
 
   if (normalizedRole === 'admin_pais') {
-    return 'Panel Admin Pais'
+    return 'Panel Admin País'
   }
 
   if (normalizedRole === 'editor') {
@@ -24,25 +24,25 @@ function getWelcomeCopy(role: string) {
   const normalizedRole = role.trim().toLowerCase()
 
   if (normalizedRole === 'superadmin') {
-    return 'Administra noticias, testimonios y contenido de forma centralizada.'
+    return 'Coordina noticias, testimonios, solicitudes y configuracion general.'
   }
 
   if (normalizedRole === 'admin_pais') {
-    return 'Coordina publicaciones, usuarios y contexto operativo de tu pais.'
+    return 'Coordina publicaciones, usuarios y contexto operativo de tu país.'
   }
 
   if (normalizedRole === 'editor') {
     return 'Escribe, actualiza y cuida la calidad del contenido publicado.'
   }
 
-  return 'Bienvenido a tu espacio de gestion dentro de la plataforma.'
+  return 'Bienvenido a tu espacio de gestión dentro de la plataforma.'
 }
 
 function getDisplayName(user: AuthUser | null) {
   const normalizedRole = user?.rol?.trim().toLowerCase() ?? ''
 
   if (normalizedRole === 'superadmin') {
-    return 'superadmin'
+    return user?.nombre?.trim() || user?.username?.trim() || 'Administrador'
   }
 
   return user?.nombre?.trim() || user?.username?.trim() || 'Usuario'

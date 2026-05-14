@@ -26,7 +26,7 @@ function getRoleLabel(user: UserRecord) {
 }
 
 function getCountryLabel(user: UserRecord) {
-  return user.pais ?? (user.pais_id != null ? `Pais ${user.pais_id}` : 'Sin pais')
+  return user.pais ?? (user.pais_id != null ? `País ${user.pais_id}` : 'Sin país')
 }
 
 function getRoleTone(user: UserRecord) {
@@ -201,7 +201,7 @@ function UsersPage() {
             <div className="users-directory__actions">
               <a
                 className="users-directory__button users-directory__button--primary"
-                href="#/superadmin/usuarios/crear"
+                href="#/panel/usuarios/crear"
               >
                 <HiOutlinePlus aria-hidden="true" />
                 Crear usuario
@@ -263,7 +263,7 @@ function UsersPage() {
 
                       <div className="users-row__actions">
                         <a
-                          href={`#/superadmin/usuarios/editar/${user.id ?? ''}`}
+                          href={`#/panel/usuarios/editar/${user.id ?? ''}`}
                           aria-label={`Editar a ${getFullName(user)}`}
                           title="Editar usuario"
                         >

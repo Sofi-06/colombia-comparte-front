@@ -790,10 +790,37 @@
 }
 
 .testimonial-card {
-  padding: 1.55rem;
+  position: relative;
+  min-height: 31rem;
+  perspective: 1200px;
+  padding: 0;
   color: #ffffff;
   animation: testimonial-fade 0.55s ease;
   transition: transform 0.25s ease;
+}
+
+.testimonial-card__inner {
+  position: relative;
+  min-height: 31rem;
+  transform-style: preserve-3d;
+  transition: transform 0.75s ease;
+}
+
+.testimonial-card--flipped .testimonial-card__inner {
+  transform: rotateY(180deg);
+}
+
+.testimonial-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  backface-visibility: hidden;
+  padding: 1.55rem;
+}
+
+.testimonial-card__face--back {
+  transform: rotateY(180deg);
 }
 
 .testimonial-card--focus {
@@ -821,7 +848,9 @@
 .testimonial-card__photo {
   display: grid;
   place-items: center;
-  aspect-ratio: 4 / 5.2;
+  width: min(100%, 15rem);
+  margin: 0.8rem auto 0;
+  aspect-ratio: 1 / 1.15;
   background:
     radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 18%),
     linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.2)),
@@ -829,6 +858,12 @@
   color: rgba(255, 255, 255, 0.82);
   font-size: 3rem;
   font-weight: 700;
+}
+
+.testimonial-card__photo--image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .testimonial-card__role {
@@ -842,6 +877,52 @@
   margin: 0.7rem 0 0;
   font-size: 0.95rem;
   line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.testimonial-card__action {
+  margin-top: auto;
+  align-self: flex-start;
+  border: 0;
+  background: transparent;
+  padding: 1rem 0 0;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.testimonial-card__back {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.testimonial-card__detail-block {
+  margin-top: 0.8rem;
+}
+
+.testimonial-card__detail-label {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.testimonial-card__name--back {
+  margin: 0.65rem 0 0;
+}
+
+.testimonial-card__back-copy {
+  margin: 0.7rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  overflow: auto;
 }
 
 .testimonials-dots {
@@ -1179,6 +1260,15 @@
 
   .news-card__visual {
     min-height: 14rem;
+  }
+
+  .testimonial-card,
+  .testimonial-card__inner {
+    min-height: 28rem;
+  }
+
+  .testimonial-card__photo {
+    width: min(100%, 13rem);
   }
 }
 

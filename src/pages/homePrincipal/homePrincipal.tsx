@@ -18,7 +18,8 @@ import chileLogo from '../../assets/Chile Co N.png'
 import colombiaLogo from '../../assets/Colombia Co N.png'
 import ecuadorLogo from '../../assets/Ecuador Co N.png'
 import grupoExitoLogo from '../../assets/Grupo_Exito_logo.svg.png'
-import heroBackground from '../../assets/dashboard1.png'
+import heroBackground from '../../assets/manos-juntas.avif'
+import ownersImage from '../../assets/dueños.jpg'
 import homecenterLogo from '../../assets/Logo_Homecenter_Sodimac.png'
 import latinoamericaLogo from '../../assets/Latinoamérica Co N.png'
 import logoBlanco from '../../assets/Logo Blanco.png'
@@ -227,13 +228,13 @@ function HomePrincipal() {
       setImpactCounts(impactStats.map((stat) => Math.round(stat.value * eased)))
 
       if (progress < 1) {
-        frameId = window.requestAnimationFrame(tick)
+        frameId = globalThis.requestAnimationFrame(tick)
       }
     }
 
-    frameId = window.requestAnimationFrame(tick)
+    frameId = globalThis.requestAnimationFrame(tick)
 
-    return () => window.cancelAnimationFrame(frameId)
+    return () => globalThis.cancelAnimationFrame(frameId)
   }, [impactVisible])
 
   return (
@@ -252,7 +253,7 @@ function HomePrincipal() {
         </nav>
 
         <a className="home-principal__login" href="#/login">
-          Inicio de sesion
+          Inicio de sesión
         </a>
       </header>
 
@@ -299,7 +300,7 @@ function HomePrincipal() {
           className="about-section-homeprincipal"
           id="quienes-somos"
           style={{
-            backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.94)), url(${heroBackground})`,
+            backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.94)), url(${ownersImage})`,
           }}
         >
           <div className="about-section-homeprincipal__inner">
@@ -323,9 +324,9 @@ function HomePrincipal() {
                   organizacional y el emprendimiento con proposito.
                 </p>
                 <p>
-                  En cada pais acompanamos a personas, familias y empresas a
-                  reencontrar su proposito productivo y a construir un futuro
-                  sostenible. Porque cuando un pais comparte, Latinoamerica avanza.
+                  En cada país acompañamos a personas, familias y empresas a
+                  reencontrar su propósito productivo y a construir un futuro
+                  sostenible. Porque cuando un país comparte, Latinoamérica avanza.
                 </p>
               </div>
             </div>
@@ -553,10 +554,10 @@ function HomePrincipal() {
               </label>
 
               <label className="contact-form-homeprincipal__field">
-                <span>Pais</span>
+                <span>País</span>
                 <select defaultValue="">
                   <option value="" disabled>
-                    Selecciona tu pais
+                    Selecciona tu país
                   </option>
                   <option>Colombia</option>
                   <option>Ecuador</option>
@@ -588,7 +589,7 @@ function HomePrincipal() {
         <div className="homeprincipal-footer__inner">
           <div className="homeprincipal-footer__brand">
             <img src={latinoamericaLogo} alt="Latinoamerica Comparte" />
-            <p>"Cuando un pais comparte, Latinoamerica avanza."</p>
+            <p>"Cuando un país comparte, Latinoamérica avanza."</p>
           </div>
 
           <div className="homeprincipal-footer__links">
@@ -623,6 +624,23 @@ function HomePrincipal() {
           </div>
         </div>
       </footer>
+
+      <iframe
+        src="http://localhost:5174/"
+        title="Chatbot Latinoamerica"
+        style={{
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          margin: '0',
+          padding: '0',
+          zIndex: 50,
+          pointerEvents: 'none'
+        }}
+      />
     </div>
   )
 }
