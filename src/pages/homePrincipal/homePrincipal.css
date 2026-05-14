@@ -621,6 +621,25 @@
   align-items: flex-end;
   min-height: 15rem;
   padding: 1.4rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.news-card-homeprincipal__visual--image {
+  position: relative;
+}
+
+.news-card-homeprincipal__visual--image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 14, 34, 0.04), rgba(17, 14, 34, 0.42));
+}
+
+.news-card-homeprincipal__visual span {
+  position: relative;
+  z-index: 1;
 }
 
 .news-card-homeprincipal__visual span {

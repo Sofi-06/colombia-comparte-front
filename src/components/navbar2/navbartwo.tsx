@@ -24,7 +24,14 @@ import {
 import './navbartwo.css'
 
 type NavbarTwoProps = {
-  activeItem?: 'dashboard' | 'usuarios' | 'paises' | 'noticias' | 'testimonios' | 'solicitudes'
+  activeItem?:
+    | 'dashboard'
+    | 'usuarios'
+    | 'paises'
+    | 'noticias'
+    | 'testimonios'
+    | 'solicitudes'
+    | 'auditoria'
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -80,6 +87,13 @@ function NavbarTwo({
       href: '#/panel/testimonios',
       icon: HiOutlineChatBubbleLeftRight,
       visible: true,
+    },
+    {
+      id: 'auditoria',
+      label: 'Auditoría',
+      href: '#/panel/auditoria',
+      icon: HiOutlineClipboardDocumentList,
+      visible: normalizedRole === 'superadmin' || normalizedRole === 'admin_pais',
     },
   ] as const
   const fallbackBrand = useMemo(

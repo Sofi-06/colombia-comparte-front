@@ -25,6 +25,7 @@ type FormState = {
   empresa: string
   contenido: string
   foto_url: string
+  video_url: string
   instagram_url: string
   facebook_url: string
   estado: TestimonialPayload['estado']
@@ -38,6 +39,7 @@ const INITIAL_FORM: FormState = {
   empresa: '',
   contenido: '',
   foto_url: '',
+  video_url: '',
   instagram_url: '',
   facebook_url: '',
   estado: 'borrador',
@@ -57,6 +59,7 @@ function toPayload(form: FormState): TestimonialPayload {
     empresa: form.empresa.trim(),
     contenido: form.contenido.trim(),
     foto_url: form.foto_url.trim(),
+    video_url: form.video_url.trim() || undefined,
     instagram_url: form.instagram_url.trim(),
     facebook_url: form.facebook_url.trim(),
     estado: form.estado,
@@ -126,6 +129,7 @@ function EditarTestimonialsPage() {
           empresa: selectedTestimonial.empresa ?? '',
           contenido: selectedTestimonial.contenido ?? '',
           foto_url: selectedTestimonial.foto_url ?? '',
+          video_url: selectedTestimonial.video_url ?? '',
           instagram_url: selectedTestimonial.instagram_url ?? '',
           facebook_url: selectedTestimonial.facebook_url ?? '',
           estado:
@@ -165,6 +169,19 @@ function EditarTestimonialsPage() {
     const file = event.target.files?.[0]
 
     if (!file) {
+      return
+    }
+
+    // validate type and size (max 5MB)
+    if (!file.type.startsWith('image/')) {
+      setStatusMessage('El archivo debe ser una imagen válida.')
+      setStatusTone('error')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setStatusMessage('La imagen debe ser menor a 5 MB.')
+      setStatusTone('error')
       return
     }
 
@@ -373,6 +390,20 @@ function EditarTestimonialsPage() {
                       name="instagram_url"
                       placeholder="https://instagram.com/..."
                       value={form.instagram_url}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </label>
+
+                <label className="notice-form-field">
+                  <span>Video (YouTube)</span>
+                  <div className="notice-form-control">
+                    <HiOutlineChatBubbleLeftRight aria-hidden="true" />
+                    <input
+                      type="url"
+                      name="video_url"
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      value={form.video_url}
                       onChange={handleInputChange}
                     />
                   </div>

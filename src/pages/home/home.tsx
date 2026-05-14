@@ -15,6 +15,29 @@ import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../se
 import { getPublicTestimonials, type TestimonialRecord } from '../../services/testimonials'
 import './home.css'
 
+function getYouTubeEmbedUrl(url?: string) {
+  if (!url) return ''
+
+  try {
+    const parsedUrl = new URL(url)
+    const host = parsedUrl.hostname.replace('www.', '')
+
+    if (host.includes('youtube.com')) {
+      const videoId = parsedUrl.searchParams.get('v')
+      if (videoId) return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+    }
+
+    if (host.includes('youtu.be')) {
+      const videoId = parsedUrl.pathname.split('/').findLast(Boolean)
+      if (videoId) return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+    }
+
+    return url
+  } catch {
+    return url ?? ''
+  }
+}
+
 type SupportGroup = {
   title: string
   description: string[]
@@ -37,6 +60,7 @@ type Testimonial = {
   tone: string
   initials: string
   image?: string
+  video?: string
 }
 
 type NewsItem = {
@@ -417,6 +441,7 @@ function Home({ country }: HomeProps) {
           .map((part) => part[0]?.toUpperCase() ?? '')
           .join(''),
         image: testimonial.foto_url ?? '',
+        video: testimonial.video_url ?? '',
       }))
     : testimonials
   ).map((testimonial) => ({
@@ -444,24 +469,6 @@ function Home({ country }: HomeProps) {
     excerpt: adaptCountryCopy(item.excerpt, country),
   }))
   const newsCount = personalizedNewsItems.length
-
-  useEffect(() => {
-    const intervalId = globalThis.setInterval(() => {
-      setCurrentTestimonial(
-        (previousTestimonial) => (previousTestimonial + 1) % testimonialCount,
-      )
-    }, 5200)
-
-    return () => globalThis.clearInterval(intervalId)
-  }, [testimonialCount])
-
-  useEffect(() => {
-    const intervalId = globalThis.setInterval(() => {
-      setCurrentNews((previousNews) => (previousNews + 1) % newsCount)
-    }, 5400)
-
-    return () => globalThis.clearInterval(intervalId)
-  }, [newsCount])
 
   useEffect(() => {
     setCurrentNews(0)
@@ -759,20 +766,34 @@ function Home({ country }: HomeProps) {
                 <div className="testimonial-card__inner">
                   <div className="testimonial-card__face testimonial-card__face--front">
                     <p className="testimonial-card__name">{testimonial.name}</p>
-                    <div
-                      className={`testimonial-card__photo ${
-                        testimonial.image ? 'testimonial-card__photo--image' : ''
-                      }`}
-                      style={
-                        testimonial.image
-                          ? {
-                              backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.16), rgba(15, 23, 42, 0.26)), url(${testimonial.image})`,
-                            }
-                          : undefined
-                      }
-                    >
-                      <span>{testimonial.initials}</span>
-                    </div>
+                    {testimonial.video ? (
+                      <div className="testimonial-card__video">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src={getYouTubeEmbedUrl(testimonial.video)}
+                          title={`Video de ${testimonial.name}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className={`testimonial-card__photo ${
+                          testimonial.image ? 'testimonial-card__photo--image' : ''
+                        }`}
+                        style={
+                          testimonial.image
+                            ? {
+                                backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.16), rgba(15, 23, 42, 0.26)), url(${testimonial.image})`,
+                              }
+                            : undefined
+                        }
+                      >
+                        <span>{testimonial.initials}</span>
+                      </div>
+                    )}
                     <p className="testimonial-card__role">{testimonial.role}</p>
                     <p className="testimonial-card__quote">{testimonial.quote}</p>
                     <button
@@ -786,6 +807,15 @@ function Home({ country }: HomeProps) {
 
                   <div className="testimonial-card__face testimonial-card__face--back">
                     <div className="testimonial-card__back">
+                      {testimonial.image ? (
+                        <div
+                          className="testimonial-card__back-photo"
+                          style={{
+                            backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.16), rgba(15, 23, 42, 0.24)), url(${testimonial.image})`,
+                          }}
+                        />
+                      ) : null}
+
                       <div className="testimonial-card__detail-block">
                         <span className="testimonial-card__detail-label">Nombre</span>
                         <p className="testimonial-card__name testimonial-card__name--back">

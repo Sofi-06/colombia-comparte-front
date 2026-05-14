@@ -10,6 +10,29 @@ import {
 } from '../../services/testimonials'
 import './testimonials.css'
 
+function getYouTubeEmbedUrl(url?: string) {
+  if (!url) return ''
+  try {
+    const u = new URL(url)
+    const host = u.hostname.replace('www.', '')
+
+    if (host.includes('youtube.com')) {
+      const v = u.searchParams.get('v')
+      if (v) return `https://www.youtube.com/embed/${v}?rel=0&modestbranding=1`
+    }
+
+    if (host.includes('youtu.be')) {
+      const id = u.pathname.split('/').findLast(Boolean)
+      if (id) return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`
+    }
+
+    // fallback: return original (may be unsafe if not from youtube)
+    return url
+  } catch {
+    return url ?? ''
+  }
+}
+
 type TestimonialItem = {
   name: string
   role: string
@@ -17,7 +40,65 @@ type TestimonialItem = {
   accent: string
   initials: string
   image?: string
+  video?: string
   date?: string
+}
+
+function getTestimonialMediaContent(item: TestimonialItem) {
+  const videoUrl = item.video ?? ''
+
+  if (item.image && videoUrl) {
+    return (
+      <>
+        <div
+          className="testimonials-page-card__media--image"
+          style={{
+            backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.18), rgba(15, 23, 42, 0.3)), url(${item.image})`,
+          }}
+        />
+        <div className="testimonials-page-card__video-front">
+          <iframe
+            width="100%"
+            height="100%"
+            src={getYouTubeEmbedUrl(videoUrl)}
+            title={`Video de ${item.name}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        </div>
+      </>
+    )
+  }
+
+  if (videoUrl) {
+    return (
+      <div className="testimonials-page-card__video-front">
+        <iframe
+          width="100%"
+          height="180"
+          src={getYouTubeEmbedUrl(videoUrl)}
+          title={`Video de ${item.name}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      </div>
+    )
+  }
+
+  if (item.image) {
+    return (
+      <div
+        className="testimonials-page-card__media--image"
+        style={{
+          backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.18), rgba(15, 23, 42, 0.3)), url(${item.image})`,
+        }}
+      />
+    )
+  }
+
+  return <span>{item.initials}</span>
 }
 
 const testimonialItems: TestimonialItem[] = [
@@ -67,9 +148,23 @@ function adaptCountryCopy(text: string, country: CountryConfig) {
   return text.replaceAll('Colombia Comparte', country.brandName)
 }
 
-type TestimonialsProps = {
+type TestimonialsProps = Readonly<{
   country: CountryConfig
-}
+}>
+
+const heroTitleLetters = [
+  { char: 'T', key: 't' },
+  { char: 'e', key: 'e' },
+  { char: 's', key: 's-1' },
+  { char: 't', key: 't-2' },
+  { char: 'i', key: 'i' },
+  { char: 'm', key: 'm' },
+  { char: 'o', key: 'o-1' },
+  { char: 'n', key: 'n' },
+  { char: 'i', key: 'i-2' },
+  { char: 'o', key: 'o-2' },
+  { char: 's', key: 's-2' },
+]
 
 function Testimonials({ country }: TestimonialsProps) {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
@@ -122,6 +217,7 @@ function Testimonials({ country }: TestimonialsProps) {
           .map((part) => part[0]?.toUpperCase() ?? '')
           .join(''),
         image: item.foto_url ?? '',
+        video: item.video_url ?? '',
         date: getTestimonialPublicationDate(item)
           ? new Date(getTestimonialPublicationDate(item)).toLocaleDateString('es-CO', {
               day: '2-digit',
@@ -144,9 +240,9 @@ function Testimonials({ country }: TestimonialsProps) {
         <section className="testimonials-page__hero">
           <div className="testimonials-page__hero-inner">
             <h1 className="testimonials-page__hero-title">
-              {'Testimonios'.split('').map((char, index) => (
+              {heroTitleLetters.map(({ char, key }, index) => (
                 <span
-                  key={index}
+                  key={key}
                   className="testimonials-page__hero-letter"
                   style={{ animationDelay: `${index * 0.08}s` }}
                 >
@@ -184,18 +280,9 @@ function Testimonials({ country }: TestimonialsProps) {
                 <div className="testimonials-page-card__inner">
                   <div className="testimonials-page-card__face testimonials-page-card__face--front">
                     <div
-                      className={`testimonials-page-card__media ${
-                        item.image ? 'testimonials-page-card__media--image' : ''
-                      }`}
-                      style={
-                        item.image
-                          ? {
-                              backgroundImage: `linear-gradient(145deg, rgba(25, 33, 61, 0.18), rgba(15, 23, 42, 0.3)), url(${item.image})`,
-                            }
-                          : undefined
-                      }
+                      className={`testimonials-page-card__media ${item.image && (item.video ?? '') ? 'testimonials-page-card__media--split' : ''}`}
                     >
-                      <span>{item.initials}</span>
+                      {getTestimonialMediaContent(item)}
                     </div>
 
                     <div className="testimonials-page-card__body">
@@ -220,21 +307,32 @@ function Testimonials({ country }: TestimonialsProps) {
 
                   <div className="testimonials-page-card__face testimonials-page-card__face--back">
                     <div className="testimonials-page-card__back">
-                      <div className="testimonials-page-card__detail-block">
-                        <span className="testimonials-page-card__detail-label">Nombre</span>
-                        <h2 className="testimonials-page-card__name">{item.name}</h2>
+                      <div className="testimonials-page-card__back-content">
+                        {item.image ? (
+                          <div
+                            className="testimonials-page-card__back-media"
+                            style={{ backgroundImage: `url(${item.image})` }}
+                          />
+                        ) : null}
+
+                        <div className="testimonials-page-card__detail-block">
+                          <span className="testimonials-page-card__detail-label">Nombre</span>
+                          <h2 className="testimonials-page-card__name">{item.name}</h2>
+                        </div>
+
+                        <div className="testimonials-page-card__detail-block">
+                          <span className="testimonials-page-card__detail-label">Contenido</span>
+                          <p className="testimonials-page-card__back-copy">{item.quote}</p>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="testimonials-page-card__action"
+                          onClick={() => toggleCard(index)}
+                        >
+                          VOLVER
+                        </button>
                       </div>
-                      <div className="testimonials-page-card__detail-block">
-                        <span className="testimonials-page-card__detail-label">Contenido</span>
-                        <p className="testimonials-page-card__back-copy">{item.quote}</p>
-                      </div>
-                      <button
-                        type="button"
-                        className="testimonials-page-card__action"
-                        onClick={() => toggleCard(index)}
-                      >
-                        VOLVER
-                      </button>
                     </div>
                   </div>
                 </div>
