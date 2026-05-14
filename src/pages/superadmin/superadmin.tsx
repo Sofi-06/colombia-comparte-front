@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Banner from '../../components/banner/banner'
-import NavbarTwo from '../../components/navbar2/navbartwo'
 import Metrics from '../../components/metrics/metrics'
+import NavbarTwo from '../../components/navbar2/navbartwo'
 import './superadmin.css'
 
 function Superadmin() {

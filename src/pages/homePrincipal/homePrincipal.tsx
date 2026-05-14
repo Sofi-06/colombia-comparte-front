@@ -12,8 +12,9 @@ import {
   FaYoutube,
 } from 'react-icons/fa6'
 import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
-import { publicCountryOptions } from '../../config/countries'
+import { countryConfigs, publicCountryOptions } from '../../config/countries'
 import { createContactRequest } from '../../services/contactRequests'
+import { getNewsPublicationDate, getPublicNews } from '../../services/news'
 import alpinaLogo from '../../assets/Alpina_S.A._logo.svg.png'
 import argentinaLogo from '../../assets/Argentina Co N.png'
 import cencosudLogo from '../../assets/Cencosud_logo.svg.png'
@@ -160,6 +161,20 @@ const newsItems = [
   },
 ]
 
+type HomePrincipalNewsItem = {
+  title: string
+  description: string
+  tag: string
+  accent: string
+  href: string
+  image?: string
+}
+
+const defaultHomePrincipalNewsItems: HomePrincipalNewsItem[] = newsItems.map((item) => ({
+  ...item,
+  href: '#/noticias',
+}))
+
 const socialLinks = [
   {
     label: 'Instagram',
@@ -189,6 +204,9 @@ const socialLinks = [
 ]
 
 function HomePrincipal() {
+  const [regionalNewsItems, setRegionalNewsItems] = useState<HomePrincipalNewsItem[]>(
+    defaultHomePrincipalNewsItems,
+  )
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
   const [contactForm, setContactForm] = useState({
     nombre: '',
@@ -251,6 +269,49 @@ function HomePrincipal() {
 
     return () => globalThis.cancelAnimationFrame(frameId)
   }, [impactVisible])
+
+  useEffect(() => {
+    const accents = newsItems.map((item) => item.accent)
+    const countries = Object.values(countryConfigs)
+
+    const loadRegionalNews = async () => {
+      try {
+        const newsByCountry = await Promise.all(
+          countries.map(async (country) => {
+            const records = await getPublicNews(country.slug)
+
+            return records.map((record) => ({
+              record,
+              country,
+            }))
+          }),
+        )
+
+        const aggregatedNews = newsByCountry
+          .flat()
+          .sort((left, right) => {
+            const leftTime = new Date(getNewsPublicationDate(left.record) || 0).getTime()
+            const rightTime = new Date(getNewsPublicationDate(right.record) || 0).getTime()
+            return rightTime - leftTime
+          })
+          .slice(0, newsItems.length)
+          .map(({ record, country }, index) => ({
+            title: record.titulo?.trim() || 'Noticia sin titulo',
+            description: record.resumen?.trim() || 'Sin resumen disponible.',
+            tag: country.name.toUpperCase(),
+            accent: accents[index % accents.length] ?? 'news-card__visual--purple',
+            href: country.newsPath,
+            image: record.imagen_principal_url?.trim() || '',
+          }))
+
+        setRegionalNewsItems(aggregatedNews.length ? aggregatedNews : defaultHomePrincipalNewsItems)
+      } catch {
+        setRegionalNewsItems(defaultHomePrincipalNewsItems)
+      }
+    }
+
+    void loadRegionalNews()
+  }, [])
 
   const handleContactFieldChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -515,15 +576,26 @@ function HomePrincipal() {
           </div>
 
           <div className="news-section-homeprincipal__grid">
-            {newsItems.map((item) => (
+            {regionalNewsItems.map((item) => (
               <article key={item.title} className="news-card-homeprincipal">
-                <div className={`news-card-homeprincipal__visual ${item.accent}`}>
+                <div
+                  className={`news-card-homeprincipal__visual ${item.accent} ${
+                    item.image ? 'news-card-homeprincipal__visual--image' : ''
+                  }`}
+                  style={
+                    item.image
+                      ? {
+                          backgroundImage: `linear-gradient(180deg, rgba(26, 18, 54, 0.14), rgba(26, 18, 54, 0.72)), url(${item.image})`,
+                        }
+                      : undefined
+                  }
+                >
                   <span>{item.tag}</span>
                 </div>
                 <div className="news-card-homeprincipal__body">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
-                  <a href="#/noticias">Leer mas</a>
+                  <a href={item.href}>Leer mas</a>
                 </div>
               </article>
             ))}

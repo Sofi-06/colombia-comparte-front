@@ -10,6 +10,7 @@ import CreateRequestPage from './pages/superadmin/requests/createRequest/createR
 import EditRequestPage from './pages/superadmin/requests/editRequest/editRequest'
 import RequestsPage from './pages/superadmin/requests/requests/requests'
 import Superadmin from './pages/superadmin/superadmin'
+import AuditsPage from './pages/superadmin/audits/audits'
 import CrearNoticesPage from './pages/superadmin/notices/crearNotices/crearNotices'
 import CrearTestimonialsPage from './pages/superadmin/testimonials/crearTestimonials/crearTestimonials'
 import EditarTestimonialsPage from './pages/superadmin/testimonials/editarTestimonials/editarTestimonials'
@@ -44,6 +45,7 @@ type Page =
   | 'countries'
   | 'create-country'
   | 'edit-country'
+  | 'audits'
 
 type AppRoute = {
   countrySlug: string
@@ -109,6 +111,10 @@ function getCurrentRoute(): AppRoute {
 
   if (hash.startsWith('#/panel/testimonios') || hash.startsWith('#/superadmin/testimonios')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'admin-testimonials' : 'login' }
+  }
+
+  if (hash.startsWith('#/panel/auditoria') || hash.startsWith('#/superadmin/auditoria')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'audits' : 'login' }
   }
 
   if (hash.startsWith('#/panel/paises') || hash.startsWith('#/superadmin/paises')) {
@@ -248,6 +254,10 @@ function App() {
 
   if (currentRoute.page === 'admin-testimonials') {
     return <TestimonialsAdminPage />
+  }
+
+  if (currentRoute.page === 'audits') {
+    return <AuditsPage />
   }
 
   if (currentRoute.page === 'news') {

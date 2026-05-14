@@ -10,6 +10,7 @@ export type TestimonialRecord = {
   empresa?: string
   contenido?: string
   foto_url?: string
+  video_url?: string
   instagram_url?: string
   facebook_url?: string
   estado?: string
@@ -64,6 +65,7 @@ export type TestimonialPayload = {
   empresa: string
   contenido: string
   foto_url: string
+  video_url?: string
   instagram_url: string
   facebook_url: string
   estado: 'borrador' | 'publicado' | 'despublicado'
@@ -133,6 +135,7 @@ function normalizeTestimonialRecord(testimonial: TestimonialRecord): Testimonial
     empresa: testimonial.empresa ?? testimonial.company ?? '',
     contenido: testimonial.contenido ?? testimonial.content ?? '',
     foto_url: testimonial.foto_url ?? testimonial.photo_url ?? '',
+    video_url: testimonial.video_url ?? undefined,
     instagram_url: testimonial.instagram_url ?? testimonial.instagram ?? '',
     facebook_url: testimonial.facebook_url ?? testimonial.facebook ?? '',
     estado: testimonial.estado ?? testimonial.status ?? 'borrador',

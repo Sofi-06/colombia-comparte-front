@@ -1,5 +1,31 @@
 @import '../../notices/notices.css';
 
+.notice-form-grid {
+  align-items: start;
+}
+
+.notice-form-field {
+  min-width: 0;
+}
+
+.notice-form-field .notice-form-control {
+  min-width: 0;
+}
+
+.notice-form-field--full .notice-form-control {
+  width: 100%;
+}
+
+.notice-form-control input[type='file'] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notice-form-help {
+  max-width: 34rem;
+}
+
 .testimonial-form-toggle {
   grid-column: 1 / -1;
   display: inline-flex;
