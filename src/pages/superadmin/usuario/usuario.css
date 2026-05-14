@@ -246,6 +246,16 @@
   cursor: pointer;
 }
 
+.users-row__action-button--edit {
+  background: #eef5fb;
+  color: #4b88bf;
+}
+
+.users-row__action-button--delete {
+  background: #fff1ee;
+  color: #c56a5b;
+}
+
 .users-row__actions a {
   background: #eef5fb;
   color: #4b88bf;

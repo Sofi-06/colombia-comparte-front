@@ -8,7 +8,7 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2'
 import NavbarTwo from '../../../components/navbar2/navbartwo'
-import { getStoredAuthUser, isSuperadmin } from '../../../services/auth'
+import { getStoredAuthUser, isEditor, isSuperadmin } from '../../../services/auth'
 import { getActiveCountries, type CountryRecord } from '../../../services/countries'
 import {
   deleteNews,
@@ -100,6 +100,7 @@ function getRawCountryLabel(notice: NewsRecord) {
 
 function NoticesPage() {
   const authUser = useMemo(getStoredAuthUser, [])
+  const canDeleteNews = !isEditor(authUser)
   const [notices, setNotices] = useState<NewsRecord[]>([])
   const [countries, setCountries] = useState<CountryRecord[]>([])
   const [search, setSearch] = useState('')
@@ -330,14 +331,16 @@ function NoticesPage() {
                         >
                           <HiOutlinePencilSquare aria-hidden="true" />
                         </a>
-                        <button
-                          type="button"
-                          onClick={() => void handleDelete(notice)}
-                          aria-label={`Eliminar ${notice.titulo ?? 'noticia'}`}
-                          title="Eliminar noticia"
-                        >
-                          <HiOutlineTrash aria-hidden="true" />
-                        </button>
+                        {canDeleteNews ? (
+                          <button
+                            type="button"
+                            onClick={() => void handleDelete(notice)}
+                            aria-label={`Eliminar ${notice.titulo ?? 'noticia'}`}
+                            title="Eliminar noticia"
+                          >
+                            <HiOutlineTrash aria-hidden="true" />
+                          </button>
+                        ) : null}
                       </div>
                     </article>
                   )

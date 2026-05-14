@@ -8,7 +8,7 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2'
 import NavbarTwo from '../../../components/navbar2/navbartwo'
-import { getStoredAuthUser, isSuperadmin } from '../../../services/auth'
+import { getStoredAuthUser, isEditor, isSuperadmin } from '../../../services/auth'
 import { getActiveCountries, type CountryRecord } from '../../../services/countries'
 import {
   deleteTestimonial,
@@ -81,6 +81,7 @@ function getFormattedDate(testimonial: TestimonialRecord) {
 
 function TestimonialsAdminPage() {
   const authUser = useMemo(getStoredAuthUser, [])
+  const canDeleteTestimonials = !isEditor(authUser)
   const [testimonials, setTestimonials] = useState<TestimonialRecord[]>([])
   const [countries, setCountries] = useState<CountryRecord[]>([])
   const [search, setSearch] = useState('')
@@ -326,14 +327,16 @@ function TestimonialsAdminPage() {
                         >
                           <HiOutlinePencilSquare aria-hidden="true" />
                         </a>
-                        <button
-                          type="button"
-                          onClick={() => void handleDelete(testimonial)}
-                          aria-label={`Eliminar ${testimonial.nombre ?? 'testimonio'}`}
-                          title="Eliminar testimonio"
-                        >
-                          <HiOutlineTrash aria-hidden="true" />
-                        </button>
+                        {canDeleteTestimonials ? (
+                          <button
+                            type="button"
+                            onClick={() => void handleDelete(testimonial)}
+                            aria-label={`Eliminar ${testimonial.nombre ?? 'testimonio'}`}
+                            title="Eliminar testimonio"
+                          >
+                            <HiOutlineTrash aria-hidden="true" />
+                          </button>
+                        ) : null}
                       </div>
                     </article>
                   )

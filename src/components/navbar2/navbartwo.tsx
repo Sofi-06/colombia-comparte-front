@@ -4,6 +4,7 @@ import {
   HiOutlineChatBubbleLeftRight,
   HiOutlineClipboardDocumentList,
   HiOutlineChevronDoubleLeft,
+  HiOutlineGlobeAmericas,
   HiOutlineNewspaper,
   HiOutlinePower,
   HiOutlineSquares2X2,
@@ -23,7 +24,7 @@ import {
 import './navbartwo.css'
 
 type NavbarTwoProps = {
-  activeItem?: 'dashboard' | 'usuarios' | 'noticias' | 'testimonios' | 'solicitudes'
+  activeItem?: 'dashboard' | 'usuarios' | 'paises' | 'noticias' | 'testimonios' | 'solicitudes'
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -53,11 +54,18 @@ function NavbarTwo({
       visible: canSeeUsers,
     },
     {
+      id: 'paises',
+      label: 'Paises',
+      href: '#/panel/paises',
+      icon: HiOutlineGlobeAmericas,
+      visible: canSeeUsers,
+    },
+    {
       id: 'solicitudes',
       label: 'Solicitudes',
       href: '#/panel/solicitudes',
       icon: HiOutlineClipboardDocumentList,
-      visible: true,
+      visible: normalizedRole !== 'editor',
     },
     {
       id: 'noticias',

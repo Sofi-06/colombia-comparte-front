@@ -1,0 +1,4 @@
+.countries-directory .users-row__identity strong,
+.countries-directory .users-row__cell {
+  text-transform: none;
+}

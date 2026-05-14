@@ -1,0 +1,59 @@
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.metrics-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  color: #07132a;
+  box-shadow: 0 18px 32px rgba(41, 20, 52, 0.04);
+  min-height: 130px;
+  /* make the cards feel square-ish */
+}
+
+.metrics-card__media {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+}
+
+.metrics-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.metrics-card__title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.metrics-card__value {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-top: 0.25rem;
+}
+
+/* Variants */
+.metrics-card--1 { background: linear-gradient(135deg,#bff0ff,#8fdfff); }
+.metrics-card--2 { background: linear-gradient(135deg,#dff2ff,#c6e8ff); }
+.metrics-card--3 { background: linear-gradient(135deg,#ffdce6,#ffc4d1); }
+.metrics-card--4 { background: linear-gradient(135deg,#e6ffee,#ccffd8); }
+.metrics-card--5 { background: linear-gradient(135deg,#fff4d9,#ffe3a8); }
+.metrics-card--6 { background: linear-gradient(135deg,#f1e6ff,#e0ccff); }
+
+@media (max-width: 720px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+

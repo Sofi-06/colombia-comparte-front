@@ -135,14 +135,29 @@
 }
 
 .footer__links a,
+.footer__link-button,
 .footer__contact-list a {
   color: rgba(255, 255, 255, 0.98);
-  text-decoration: none;
   font-size: 0.92rem;
   line-height: 1.45;
 }
 
+.footer__links a,
+.footer__contact-list a {
+  text-decoration: none;
+}
+
+.footer__link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
 .footer__links a:hover,
+.footer__link-button:hover,
 .footer__contact-list a:hover,
 .footer__social:hover {
   opacity: 0.82;

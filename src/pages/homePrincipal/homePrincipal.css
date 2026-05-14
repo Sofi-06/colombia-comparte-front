@@ -756,7 +756,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 0;
+  cursor: pointer;
   font-weight: 700;
+  font: inherit;
 }
 
 .support-card-homeprincipal__button {
@@ -879,6 +882,23 @@
   min-height: 10rem;
 }
 
+.contact-form-homeprincipal__status {
+  margin: 1.2rem 0 0;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  font-weight: 600;
+}
+
+.contact-form-homeprincipal__status--success {
+  background: rgba(20, 184, 166, 0.1);
+  color: #0f766e;
+}
+
+.contact-form-homeprincipal__status--error {
+  background: rgba(244, 63, 94, 0.1);
+  color: #be123c;
+}
+
 .contact-form-homeprincipal__submit {
   display: inline-flex;
   align-items: center;
@@ -893,6 +913,11 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+}
+
+.contact-form-homeprincipal__submit:disabled {
+  opacity: 0.76;
+  cursor: wait;
 }
 
 .homeprincipal-footer {
