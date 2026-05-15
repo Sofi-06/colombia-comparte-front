@@ -1,6 +1,7 @@
 .superadmin-page {
 	position: relative;
-	min-height: 100vh;
+	/* increase page min-height to allow a longer dashboard */
+	min-height: 140vh;
 	overflow: hidden;
 	padding: 2rem;
 	background:

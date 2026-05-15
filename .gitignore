@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Widget build artifacts
+public/chatbot/chat-widget.js
+public/chatbot/frontend.css

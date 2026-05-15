@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:widget": "vite build --mode widget",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:widget": "vite preview --host 0.0.0.0 --port 4173 --strictPort"
   },
   "dependencies": {
     "react": "^19.2.5",

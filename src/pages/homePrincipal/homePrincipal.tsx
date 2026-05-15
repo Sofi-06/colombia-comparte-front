@@ -11,6 +11,7 @@ import {
   FaTiktok,
   FaYoutube,
 } from 'react-icons/fa6'
+import ChatbotEmbed from '../../components/chatbot/chatbotEmbed'
 import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
 import { countryConfigs, publicCountryOptions } from '../../config/countries'
 import { createContactRequest } from '../../services/contactRequests'
@@ -822,22 +823,7 @@ function HomePrincipal() {
         </div>
       </footer>
 
-      <iframe
-        src="http://localhost:5174/"
-        title="Chatbot Latinoamerica"
-        style={{
-          position: 'fixed',
-          top: '0',
-          left: '0',
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          margin: '0',
-          padding: '0',
-          zIndex: 50,
-          pointerEvents: 'none'
-        }}
-      />
+      <ChatbotEmbed />
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}

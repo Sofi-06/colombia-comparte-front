@@ -17,9 +17,22 @@ import './home.css'
 
 function getYouTubeEmbedUrl(url?: string) {
   if (!url) return ''
+  const trimmed = url.trim()
+  if (!trimmed) return ''
+
+  // If the value doesn't look like an external or YouTube URL, avoid calling URL()
+  if (
+    !trimmed.includes('youtube') &&
+    !trimmed.includes('youtu.be') &&
+    !/^https?:\/\//i.test(trimmed) &&
+    !trimmed.startsWith('//') &&
+    !trimmed.startsWith('/')
+  ) {
+    return trimmed
+  }
 
   try {
-    const parsedUrl = new URL(url)
+    const parsedUrl = new URL(trimmed)
     const host = parsedUrl.hostname.replace('www.', '')
 
     if (host.includes('youtube.com')) {
@@ -32,9 +45,9 @@ function getYouTubeEmbedUrl(url?: string) {
       if (videoId) return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
     }
 
-    return url
+    return trimmed
   } catch {
-    return url ?? ''
+    return trimmed ?? ''
   }
 }
 

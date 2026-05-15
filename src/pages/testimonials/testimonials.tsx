@@ -12,8 +12,22 @@ import './testimonials.css'
 
 function getYouTubeEmbedUrl(url?: string) {
   if (!url) return ''
+  const trimmed = url.trim()
+  if (!trimmed) return ''
+
+  // If the value doesn't look like an external or YouTube URL, avoid calling URL()
+  if (
+    !trimmed.includes('youtube') &&
+    !trimmed.includes('youtu.be') &&
+    !/^https?:\/\//i.test(trimmed) &&
+    !trimmed.startsWith('//') &&
+    !trimmed.startsWith('/')
+  ) {
+    return trimmed
+  }
+
   try {
-    const u = new URL(url)
+    const u = new URL(trimmed)
     const host = u.hostname.replace('www.', '')
 
     if (host.includes('youtube.com')) {
@@ -27,9 +41,9 @@ function getYouTubeEmbedUrl(url?: string) {
     }
 
     // fallback: return original (may be unsafe if not from youtube)
-    return url
+    return trimmed
   } catch {
-    return url ?? ''
+    return trimmed ?? ''
   }
 }
 
