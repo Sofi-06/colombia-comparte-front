@@ -16,11 +16,13 @@ import {
 import { createContactRequest } from '../../services/contactRequests'
 import './publicRequestModal.css'
 
+type PublicRequestModalPurpose = 'Servicio' | 'Programa EDIFICA' | 'Shows y conferencias' | 'Donacion'
+
 type PublicRequestModalProps = {
   isOpen: boolean
   onClose: () => void
   initialCountrySlug?: CountrySlug | null
-  initialPurpose?: 'Servicio' | 'Programa EDIFICA' | 'Shows y conferencias'
+  initialPurpose?: PublicRequestModalPurpose
   title?: string
   subtitle?: string
 }
@@ -34,7 +36,7 @@ type FormState = {
   mensaje: string
 }
 
-const PURPOSE_OPTIONS = ['Servicio', 'Programa EDIFICA', 'Shows y conferencias'] as const
+const PURPOSE_OPTIONS = ['Servicio', 'Programa EDIFICA', 'Shows y conferencias', 'Donacion'] as const
 
 const INITIAL_FORM: FormState = {
   pais_id: '',

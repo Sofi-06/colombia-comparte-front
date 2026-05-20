@@ -13,9 +13,15 @@ import {
 } from 'react-icons/fa6'
 import ChatbotEmbed from '../../components/chatbot/chatbotEmbed'
 import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
-import { countryConfigs, publicCountryOptions } from '../../config/countries'
+import { countryConfigs, publicCountryOptions, type CountrySlug } from '../../config/countries'
 import { createContactRequest } from '../../services/contactRequests'
 import { getNewsPublicationDate, getPublicNews } from '../../services/news'
+import {
+  OPEN_PUBLIC_MODAL_EVENT,
+  openRegionalDonationFlow,
+  savePendingPublicModalIntent,
+  type PublicModalIntent,
+} from '../../utils/publicNavigation'
 import alpinaLogo from '../../assets/Alpina_S.A._logo.svg.png'
 import argentinaLogo from '../../assets/Argentina Co N.png'
 import cencosudLogo from '../../assets/Cencosud_logo.svg.png'
@@ -209,6 +215,7 @@ function HomePrincipal() {
     defaultHomePrincipalNewsItems,
   )
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [modalIntent, setModalIntent] = useState<PublicModalIntent>('request')
   const [contactForm, setContactForm] = useState({
     nombre: '',
     telefono: '',
@@ -224,6 +231,31 @@ function HomePrincipal() {
   const [impactCounts, setImpactCounts] = useState(() => impactStats.map(() => 0))
   const [teamExpanded, setTeamExpanded] = useState(false)
   const impactRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const syncAnchorSection = () => {
+      const hash = globalThis.location.hash || ''
+
+      if (!hash.startsWith('#') || hash.startsWith('#/')) {
+        return
+      }
+
+      const sectionId = hash.slice(1)
+
+      if (!sectionId) {
+        return
+      }
+
+      globalThis.requestAnimationFrame(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    syncAnchorSection()
+    globalThis.addEventListener('hashchange', syncAnchorSection)
+
+    return () => globalThis.removeEventListener('hashchange', syncAnchorSection)
+  }, [])
 
   useEffect(() => {
     const node = impactRef.current
@@ -312,6 +344,30 @@ function HomePrincipal() {
     }
 
     void loadRegionalNews()
+  }, [])
+
+  useEffect(() => {
+    const handleOpenPublicModal = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        intent?: PublicModalIntent
+        countrySlug?: CountrySlug | null
+      }>).detail
+      const countrySlug = detail?.countrySlug ?? 'colombia'
+      const intent = detail?.intent === 'donation' ? 'donation' : 'request'
+
+      if (intent === 'donation') {
+        openRegionalDonationFlow()
+        return
+      }
+
+      setModalIntent(intent)
+      savePendingPublicModalIntent(intent)
+      globalThis.location.hash = countryConfigs[countrySlug].homePath
+    }
+
+    globalThis.addEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+
+    return () => globalThis.removeEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
   }, [])
 
   const handleContactFieldChange = (
@@ -622,7 +678,10 @@ function HomePrincipal() {
               <button
                 type="button"
                 className="support-card-homeprincipal__button"
-                onClick={() => setIsRequestModalOpen(true)}
+                onClick={() => {
+                  setModalIntent('request')
+                  setIsRequestModalOpen(true)
+                }}
               >
                 Más información
               </button>
@@ -665,7 +724,10 @@ function HomePrincipal() {
               <button
                 type="button"
                 className="support-card-homeprincipal__outline"
-                onClick={() => setIsRequestModalOpen(true)}
+                onClick={() => {
+                  setModalIntent('donation')
+                  setIsRequestModalOpen(true)
+                }}
               >
                 Donar con tarjeta
               </button>
@@ -827,8 +889,17 @@ function HomePrincipal() {
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}
-        title="Solicitud para Latinoamérica Comparte"
-        subtitle="Completa el formulario y direccionaremos tu solicitud al país o equipo regional correspondiente."
+        initialPurpose={modalIntent === 'donation' ? 'Donacion' : 'Servicio'}
+        title={
+          modalIntent === 'donation'
+            ? 'Donar en Latinoamérica Comparte'
+            : 'Solicitud para Latinoamérica Comparte'
+        }
+        subtitle={
+          modalIntent === 'donation'
+            ? 'Comparte tus datos y te orientaremos sobre el proceso de donación.'
+            : 'Completa el formulario y direccionaremos tu solicitud al país o equipo regional correspondiente.'
+        }
       />
     </div>
   )

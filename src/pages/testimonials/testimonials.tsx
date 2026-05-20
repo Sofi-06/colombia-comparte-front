@@ -8,6 +8,12 @@ import {
   getTestimonialPublicationDate,
   type TestimonialRecord,
 } from '../../services/testimonials'
+import {
+  OPEN_PUBLIC_MODAL_EVENT,
+  openCountryContactFlow,
+  openRegionalDonationFlow,
+  type PublicModalIntent,
+} from '../../utils/publicNavigation'
 import './testimonials.css'
 
 function getYouTubeEmbedUrl(url?: string) {
@@ -210,6 +216,30 @@ function Testimonials({ country }: TestimonialsProps) {
     setFlippedCards([])
   }, [country.slug, dynamicTestimonials.length])
 
+  useEffect(() => {
+    const handleOpenPublicModal = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        intent?: PublicModalIntent
+        countrySlug?: string | null
+      }>).detail
+
+      if (detail?.countrySlug && detail.countrySlug !== country.slug) {
+        return
+      }
+
+      if (detail?.intent === 'donation') {
+        openRegionalDonationFlow()
+        return
+      }
+
+      setIsRequestModalOpen(true)
+    }
+
+    globalThis.addEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+
+    return () => globalThis.removeEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+  }, [country.slug])
+
   const toggleCard = (index: number) => {
     setFlippedCards((current) =>
       current.includes(index)
@@ -248,7 +278,10 @@ function Testimonials({ country }: TestimonialsProps) {
 
   return (
     <div className="testimonials-page">
-      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Navbar
+        country={country}
+        onOpenRequestModal={() => openCountryContactFlow(country.slug, 'request')}
+      />
 
       <main>
         <section className="testimonials-page__hero">
@@ -356,7 +389,11 @@ function Testimonials({ country }: TestimonialsProps) {
         </section>
       </main>
 
-      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Footer
+        country={country}
+        onOpenRequestModal={() => openCountryContactFlow(country.slug, 'request')}
+        onOpenDonationModal={() => openRegionalDonationFlow()}
+      />
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}

@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { countryConfigs, type CountrySlug } from '../../config/countries'
+import {
+  dispatchOpenPublicModal,
+  parsePublicHash,
+  SUPPRESS_CHATBOT_COUNTRY_REDIRECT_KEY,
+} from '../../utils/publicNavigation'
 
 const WIDGET_VERSION = '20260519-6'
 const DEFAULT_WIDGET_SCRIPT_URL = `/chatbot/chat-widget.js?v=${WIDGET_VERSION}`
@@ -40,12 +45,18 @@ function isPublicOrRelativeUrl(url: string) {
 }
 
 function getCountrySlugFromHash(hash: string) {
-  if (hash.startsWith('#/pais/')) {
-    const [, , countrySlug] = hash.slice(1).split('/')
+  const { routeHash } = parsePublicHash(hash)
+
+  if (routeHash.startsWith('#/pais/')) {
+    const [, , countrySlug] = routeHash.slice(1).split('/')
     return (countrySlug || 'colombia') as CountrySlug
   }
 
-  if (hash.startsWith('#/home') || hash.startsWith('#/noticias') || hash.startsWith('#/testimonios')) {
+  if (
+    routeHash.startsWith('#/home') ||
+    routeHash.startsWith('#/noticias') ||
+    routeHash.startsWith('#/testimonios')
+  ) {
     return 'colombia'
   }
 
@@ -54,6 +65,36 @@ function getCountrySlugFromHash(hash: string) {
 
 function getCountryHomeHash(countrySlug: CountrySlug) {
   return countryConfigs[countrySlug].homePath
+}
+
+function normalizeText(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+function getTriggerElement(target: EventTarget | null) {
+  return target instanceof HTMLElement ? target.closest<HTMLElement>('button, a, [role="button"]') : null
+}
+
+function matchesContactTrigger(target: EventTarget | null) {
+  const element = getTriggerElement(target)
+
+  if (!element) {
+    return false
+  }
+
+  const label = normalizeText(element.textContent ?? '')
+
+  return (
+    label.includes('solicitud') ||
+    label.includes('contacto') ||
+    label.includes('contactanos') ||
+    label.includes('donacion') ||
+    label.includes('donar')
+  )
 }
 
 async function fetchWidgetSource(scriptUrl: string) {
@@ -182,14 +223,35 @@ function ChatbotEmbed({ title = 'Chatbot Latinoamerica' }: Readonly<ChatbotEmbed
         }
 
         const apiUrl = import.meta.env.VITE_CHAT_API_URL?.trim()
+        const storedCountrySlug = globalThis.sessionStorage.getItem(
+          CHATBOT_SELECTED_COUNTRY_KEY,
+        ) as CountrySlug | null
+        const currentCountrySlug = getCountrySlugFromHash(globalThis.location.hash)
         const initialCountrySlug =
-          getCountrySlugFromHash(globalThis.location.hash) ??
-          (globalThis.sessionStorage.getItem(CHATBOT_SELECTED_COUNTRY_KEY) as CountrySlug | null) ??
+          currentCountrySlug ??
+          storedCountrySlug ??
           'colombia'
         const initialOpen = globalThis.sessionStorage.getItem(CHATBOT_AUTO_OPEN_KEY) === 'true'
+        const suppressCountryRedirect =
+          globalThis.sessionStorage.getItem(SUPPRESS_CHATBOT_COUNTRY_REDIRECT_KEY) === 'true'
 
         if (initialOpen) {
           globalThis.sessionStorage.removeItem(CHATBOT_AUTO_OPEN_KEY)
+        }
+
+        if (suppressCountryRedirect) {
+          globalThis.sessionStorage.removeItem(SUPPRESS_CHATBOT_COUNTRY_REDIRECT_KEY)
+        }
+
+        if (!suppressCountryRedirect && !currentCountrySlug && storedCountrySlug) {
+          const nextHash = getCountryHomeHash(storedCountrySlug)
+
+          if (globalThis.location.hash !== nextHash) {
+            globalThis.sessionStorage.setItem(CHATBOT_AUTO_OPEN_KEY, 'true')
+            globalThis.location.hash = nextHash
+            setMountKey((currentValue) => currentValue + 1)
+            return
+          }
         }
 
         if (!isActive) {
@@ -234,6 +296,39 @@ function ChatbotEmbed({ title = 'Chatbot Latinoamerica' }: Readonly<ChatbotEmbed
         cleanup()
       }
     }
+  }, [mountKey])
+
+  useEffect(() => {
+    const shadowRoot = hostRef.current?.shadowRoot
+
+    if (!shadowRoot) {
+      return
+    }
+
+    const handleShadowClick = (event: Event) => {
+      if (!matchesContactTrigger(event.target)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+
+      const triggerElement = getTriggerElement(event.target)
+      const label = normalizeText(triggerElement?.textContent ?? '')
+      const selectedCountrySlug =
+        getCountrySlugFromHash(globalThis.location.hash) ??
+        (globalThis.sessionStorage.getItem(CHATBOT_SELECTED_COUNTRY_KEY) as CountrySlug | null) ??
+        'colombia'
+
+      dispatchOpenPublicModal(
+        label.includes('donacion') || label.includes('donar') ? 'donation' : 'request',
+        selectedCountrySlug,
+      )
+    }
+
+    shadowRoot.addEventListener('click', handleShadowClick, true)
+
+    return () => shadowRoot.removeEventListener('click', handleShadowClick, true)
   }, [mountKey])
 
   return (

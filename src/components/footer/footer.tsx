@@ -23,9 +23,10 @@ const contactItems = [
 type FooterProps = {
   country: CountryConfig
   onOpenRequestModal?: () => void
+  onOpenDonationModal?: () => void
 }
 
-function Footer({ country, onOpenRequestModal }: FooterProps) {
+function Footer({ country, onOpenRequestModal, onOpenDonationModal }: FooterProps) {
   const exploreColumns = country.shortNav
     ? [
         [
@@ -93,7 +94,9 @@ function Footer({ country, onOpenRequestModal }: FooterProps) {
                         <button
                           type="button"
                           className="footer__link-button"
-                          onClick={onOpenRequestModal}
+                          onClick={
+                            item.label === 'Donaciones' ? onOpenDonationModal : onOpenRequestModal
+                          }
                         >
                           {item.label}
                         </button>

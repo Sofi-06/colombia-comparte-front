@@ -14,6 +14,13 @@ import PublicRequestModal from '../../components/publicRequestModal/publicReques
 import type { CountryConfig } from '../../config/countries'
 import { getNewsPublicationDate, getPublicNews, type NewsRecord } from '../../services/news'
 import { getPublicTestimonials, type TestimonialRecord } from '../../services/testimonials'
+import {
+  consumePendingPublicModalIntent,
+  OPEN_PUBLIC_MODAL_EVENT,
+  openRegionalDonationFlow,
+  type PublicModalIntent,
+  parsePublicHash,
+} from '../../utils/publicNavigation'
 import './home.css'
 
 function getYouTubeEmbedUrl(url?: string) {
@@ -324,6 +331,7 @@ type HomeProps = {
 
 function Home({ country }: HomeProps) {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [modalIntent, setModalIntent] = useState<PublicModalIntent>('request')
   const [currentSlide, setCurrentSlide] = useState(0)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [currentNews, setCurrentNews] = useState(0)
@@ -343,6 +351,63 @@ function Home({ country }: HomeProps) {
 
     return () => globalThis.clearInterval(intervalId)
   }, [])
+
+  useEffect(() => {
+    const syncPublicHashState = () => {
+      const { sectionId } = parsePublicHash(globalThis.location.hash)
+      const pendingIntent = consumePendingPublicModalIntent()
+
+      if (pendingIntent) {
+        setModalIntent(pendingIntent)
+        setIsRequestModalOpen(true)
+      }
+
+      if (globalThis.location.hash === '#contacto' || globalThis.location.hash === '#contactenos') {
+        setModalIntent('request')
+        setIsRequestModalOpen(true)
+        globalThis.history.replaceState(null, '', country.homePath)
+        return
+      }
+
+      if (!sectionId) {
+        return
+      }
+
+      globalThis.requestAnimationFrame(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    syncPublicHashState()
+    globalThis.addEventListener('hashchange', syncPublicHashState)
+
+    return () => globalThis.removeEventListener('hashchange', syncPublicHashState)
+  }, [])
+
+  useEffect(() => {
+    const handleOpenPublicModal = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        intent?: PublicModalIntent
+        countrySlug?: string | null
+      }>).detail
+
+      if (detail?.countrySlug && detail.countrySlug !== country.slug) {
+        return
+      }
+
+      if (detail?.intent === 'donation') {
+        openRegionalDonationFlow()
+        return
+      }
+
+      setModalIntent('request')
+      setIsRequestModalOpen(true)
+    }
+
+    globalThis.addEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+
+    return () => globalThis.removeEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+  }, [country.slug])
 
   useEffect(() => {
     const loadPublicNews = async () => {
@@ -509,7 +574,13 @@ function Home({ country }: HomeProps) {
 
   return (
     <div className="home">
-      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Navbar
+        country={country}
+        onOpenRequestModal={() => {
+          setModalIntent('request')
+          setIsRequestModalOpen(true)
+        }}
+      />
 
       <main>
         <section className="hero-carousel" id="inicio" aria-label="Destacados">
@@ -948,13 +1019,33 @@ function Home({ country }: HomeProps) {
         </section>
       </main>
 
-      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Footer
+        country={country}
+        onOpenRequestModal={() => {
+          setModalIntent('request')
+          setIsRequestModalOpen(true)
+        }}
+        onOpenDonationModal={() => {
+          openRegionalDonationFlow()
+        }}
+      />
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}
         initialCountrySlug={country.slug}
-        title={country.shortNav ? `Solicitud en ${country.name}` : 'Solicitud en Colombia'}
-        subtitle="Completa el formulario y nuestro equipo te respondera desde este mismo pais."
+        initialPurpose={modalIntent === 'donation' ? 'Donacion' : 'Servicio'}
+        title={
+          modalIntent === 'donation'
+            ? `Donar en ${country.name}`
+            : country.shortNav
+              ? `Solicitud en ${country.name}`
+              : 'Solicitud en Colombia'
+        }
+        subtitle={
+          modalIntent === 'donation'
+            ? 'Comparte tus datos y te contactaremos para orientarte sobre como donar en este pais.'
+            : 'Completa el formulario y nuestro equipo te respondera desde este mismo pais.'
+        }
       />
       <ChatbotEmbed />
     </div>

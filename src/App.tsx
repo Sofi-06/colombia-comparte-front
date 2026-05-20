@@ -24,6 +24,7 @@ import Testimonials from './pages/testimonials/testimonials'
 import CountriesPage from './pages/superadmin/countries/countries'
 import CrearPaisPage from './pages/superadmin/countries/crearPais/crearPais'
 import EditarPaisPage from './pages/superadmin/countries/editarPais/editarPais'
+import { parsePublicHash } from './utils/publicNavigation'
 
 type Page =
   | 'principal'
@@ -61,7 +62,8 @@ function hasActiveSession() {
 }
 
 function getCurrentRoute(): AppRoute {
-  const hash = globalThis.location.hash || ''
+  const { routeHash } = parsePublicHash(globalThis.location.hash || '')
+  const hash = routeHash || ''
   const isPanelRoute = hash.startsWith('#/panel')
   const isLegacyAdminRoute = hash.startsWith('#/superadmin')
 

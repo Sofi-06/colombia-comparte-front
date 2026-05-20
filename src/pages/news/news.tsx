@@ -8,6 +8,12 @@ import {
   getPublicNews,
   type NewsRecord,
 } from '../../services/news'
+import {
+  OPEN_PUBLIC_MODAL_EVENT,
+  openCountryContactFlow,
+  openRegionalDonationFlow,
+  type PublicModalIntent,
+} from '../../utils/publicNavigation'
 import './news.css'
 
 const newsItems = [
@@ -94,6 +100,30 @@ function News({ country }: NewsProps) {
     setFlippedCards([])
   }, [country.slug, dynamicNewsItems.length])
 
+  useEffect(() => {
+    const handleOpenPublicModal = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        intent?: PublicModalIntent
+        countrySlug?: string | null
+      }>).detail
+
+      if (detail?.countrySlug && detail.countrySlug !== country.slug) {
+        return
+      }
+
+      if (detail?.intent === 'donation') {
+        openRegionalDonationFlow()
+        return
+      }
+
+      setIsRequestModalOpen(true)
+    }
+
+    globalThis.addEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+
+    return () => globalThis.removeEventListener(OPEN_PUBLIC_MODAL_EVENT, handleOpenPublicModal)
+  }, [country.slug])
+
   const toggleCard = (index: number) => {
     setFlippedCards((current) =>
       current.includes(index)
@@ -125,7 +155,10 @@ function News({ country }: NewsProps) {
 
   return (
     <div className="news-page">
-      <Navbar country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Navbar
+        country={country}
+        onOpenRequestModal={() => openCountryContactFlow(country.slug, 'request')}
+      />
 
       <main>
         <section className="news-page__hero">
@@ -230,7 +263,11 @@ function News({ country }: NewsProps) {
         </section>
       </main>
 
-      <Footer country={country} onOpenRequestModal={() => setIsRequestModalOpen(true)} />
+      <Footer
+        country={country}
+        onOpenRequestModal={() => openCountryContactFlow(country.slug, 'request')}
+        onOpenDonationModal={() => openRegionalDonationFlow()}
+      />
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}
