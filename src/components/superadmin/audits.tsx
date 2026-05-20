@@ -22,7 +22,7 @@ function formatAuditUser(log: AuditRecord) {
 
 function formatAuditAction(value?: string) {
   if (!value) {
-    return 'Sin accion'
+    return 'Sin acción'
   }
 
   return value
@@ -87,7 +87,7 @@ function AuditList() {
         setLogs(response.audits)
         setTotal(response.total)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar auditoria.')
+        setError(err instanceof Error ? err.message : 'Error al cargar auditoría.')
       } finally {
         setIsLoading(false)
         setIsPageLoading(false)
@@ -105,8 +105,8 @@ function AuditList() {
     <section className="audit-card">
       <div className="audit-card__hero">
         <div>
-          <p className="audit-card__eyebrow">Bitacora del sistema</p>
-          <h2>Auditoria reciente</h2>
+          <p className="audit-card__eyebrow">Bitácora del sistema</p>
+          <h2>Auditoría reciente</h2>
           <p className="audit-card__subtitle">
             Revisa actividad de usuarios, accesos y cambios hechos en la plataforma.
           </p>
@@ -122,7 +122,7 @@ function AuditList() {
       </div>
 
       {isLoading ? (
-        <p className="audit-state">Cargando registros de auditoria...</p>
+        <p className="audit-state">Cargando registros de auditoría...</p>
       ) : error ? (
         <p className="audit-error">{error}</p>
       ) : (
@@ -147,21 +147,21 @@ function AuditList() {
                   </div>
 
                   <div className="audit-field">
-                    <span className="audit-field__label">Accion</span>
+                    <span className="audit-field__label">Acción</span>
                     <span className={`audit-badge ${getActionTone(log.action)}`}>
                       {formatAuditAction(log.action)}
                     </span>
                   </div>
 
                   <div className="audit-field">
-                    <span className="audit-field__label">Modulo</span>
+                    <span className="audit-field__label">Módulo</span>
                     <span className="audit-row__module">{formatAuditModule(log.module)}</span>
                   </div>
                 </div>
 
                 <div className="audit-entry__description">
-                  <span className="audit-field__label">Descripcion</span>
-                  <span className="audit-row__description">{log.description ?? 'Sin descripcion'}</span>
+                  <span className="audit-field__label">Descripción</span>
+                  <span className="audit-row__description">{log.description ?? 'Sin descripción'}</span>
                 </div>
               </article>
             ))}
@@ -169,7 +169,7 @@ function AuditList() {
 
           <div className="audit-pagination">
             <div className="audit-pagination__meta">
-              {isPageLoading ? 'Actualizando pagina...' : `Pagina ${page} de ${totalPages}`}
+              {isPageLoading ? 'Actualizando página...' : `Página ${page} de ${totalPages}`}
             </div>
 
             <div className="audit-pagination__actions">

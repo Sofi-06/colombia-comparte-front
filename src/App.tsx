@@ -11,6 +11,8 @@ import EditRequestPage from './pages/superadmin/requests/editRequest/editRequest
 import RequestsPage from './pages/superadmin/requests/requests/requests'
 import Superadmin from './pages/superadmin/superadmin'
 import AuditsPage from './pages/superadmin/audits/audits'
+import ChatbotAnalyticsPage from './pages/superadmin/chatbotAnalytics/chatbotAnalyticsPage'
+import ChatbotFaqsPage from './pages/superadmin/chatbotAnalytics/chatbotFaqsPage'
 import CrearNoticesPage from './pages/superadmin/notices/crearNotices/crearNotices'
 import CrearTestimonialsPage from './pages/superadmin/testimonials/crearTestimonials/crearTestimonials'
 import EditarTestimonialsPage from './pages/superadmin/testimonials/editarTestimonials/editarTestimonials'
@@ -46,6 +48,8 @@ type Page =
   | 'create-country'
   | 'edit-country'
   | 'audits'
+  | 'chatbot-analytics'
+  | 'chatbot-faqs'
 
 type AppRoute = {
   countrySlug: string
@@ -115,6 +119,14 @@ function getCurrentRoute(): AppRoute {
 
   if (hash.startsWith('#/panel/auditoria') || hash.startsWith('#/superadmin/auditoria')) {
     return { countrySlug: 'colombia', page: hasActiveSession() ? 'audits' : 'login' }
+  }
+
+  if (hash.startsWith('#/panel/chatbot/faqs') || hash.startsWith('#/superadmin/chatbot/faqs')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'chatbot-faqs' : 'login' }
+  }
+
+  if (hash.startsWith('#/panel/chatbot') || hash.startsWith('#/superadmin/chatbot')) {
+    return { countrySlug: 'colombia', page: hasActiveSession() ? 'chatbot-analytics' : 'login' }
   }
 
   if (hash.startsWith('#/panel/paises') || hash.startsWith('#/superadmin/paises')) {
@@ -258,6 +270,14 @@ function App() {
 
   if (currentRoute.page === 'audits') {
     return <AuditsPage />
+  }
+
+  if (currentRoute.page === 'chatbot-analytics') {
+    return <ChatbotAnalyticsPage />
+  }
+
+  if (currentRoute.page === 'chatbot-faqs') {
+    return <ChatbotFaqsPage />
   }
 
   if (currentRoute.page === 'news') {

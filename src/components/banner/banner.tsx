@@ -24,7 +24,7 @@ function getWelcomeCopy(role: string) {
   const normalizedRole = role.trim().toLowerCase()
 
   if (normalizedRole === 'superadmin') {
-    return 'Coordina noticias, testimonios, solicitudes y configuracion general.'
+    return 'Coordina noticias, testimonios, solicitudes y configuración general.'
   }
 
   if (normalizedRole === 'admin_pais') {

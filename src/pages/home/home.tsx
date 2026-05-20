@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fa6'
 import { FiCalendar } from 'react-icons/fi'
 import { LuBuilding2, LuHandshake, LuRocket } from 'react-icons/lu'
+import ChatbotEmbed from '../../components/chatbot/chatbotEmbed'
 import Footer from '../../components/footer/footer'
 import Navbar from '../../components/navbar/navbar'
 import PublicRequestModal from '../../components/publicRequestModal/publicRequestModal'
@@ -90,14 +91,14 @@ const heroSlides = [
       'Creamos oportunidades reales para que personas y familias vuelvan a ser productivas.',
     eyebrow: 'EDIFICA',
     subtitle:
-      'El programa de emprendimiento que transforma suenos en negocios sostenibles',
+      'El programa de emprendimiento que transforma sueños en negocios sostenibles',
     ctaLabel: 'QUIERO EMPRENDER',
     ctaHref: '#mision',
     ctaIcon: '>',
   },
-  {
-    title:
-      'Mas que ayuda, brindamos esperanza y oportunidades para un manana mas brillante y sostenible.',
+    {
+      title:
+      'Más que ayuda, brindamos esperanza y oportunidades para un mañana más brillante y sostenible.',
     ctaLabel: 'CONOCENOS',
     ctaHref: '#sobre-nosotros',
   },
@@ -116,7 +117,7 @@ const supportGroups: SupportGroup[] = [
     title: 'Personas y familias en procesos de reconstruccion economica',
     description: [
       'La llamada pobreza oculta o pobreza vergonzante vive en hogares donde una quiebra, un despido o una enfermedad desordena la vida y la autoestima.',
-      'A estas familias les damos lo mas valioso: una oportunidad real para volver a levantarse, recuperar su productividad y reconstruir su futuro desde el emprendimiento.',
+      'A estas familias les damos lo más valioso: una oportunidad real para volver a levantarse, recuperar su productividad y reconstruir su futuro desde el emprendimiento.',
     ],
     accent: 'support-card--purple',
     icon: LuHandshake,
@@ -124,18 +125,18 @@ const supportGroups: SupportGroup[] = [
   {
     title: 'Emprendedores que quieren crear o fortalecer su negocio',
     description: [
-      'Dirigimos nuestros esfuerzos hacia los visionarios que suenan con emprender y estructurar sus ideas de negocio a traves de nuestro programa de altos estudios en:',
+      'Dirigimos nuestros esfuerzos hacia los visionarios que sueñan con emprender y estructurar sus ideas de negocio a través de nuestro programa de altos estudios en:',
     ],
     list: [
-      'Mentoria',
+      'Mentoría',
       'Crecimiento personal',
       'Estrategia',
       'Finanzas',
       'Marketing',
       'Modelo de negocio',
-      'Acompanamiento real y humano',
+      'Acompañamiento real y humano',
     ],
-    closing: 'EDIFICA no solo ensena a emprender.',
+    closing: 'EDIFICA no solo enseña a emprender.',
     accent: 'support-card--pink',
     icon: LuRocket,
   },
@@ -160,25 +161,25 @@ const supportGroups: SupportGroup[] = [
 const missionPillars = [
   {
     title: 'Programa de altos estudios en emprendimiento EDIFICA',
-    note: 'Ruta de negocio, mentoria y acompanamiento real para convertir una idea en proyecto sostenible.',
+    note: 'Ruta de negocio, mentoría y acompañamiento real para convertir una idea en proyecto sostenible.',
     tone: 'mission-pillar--blue',
   },
   {
     title: 'Equipo de coaches certificados y desarrollo integral',
-    note: 'Formacion humana para restaurar seguridad, enfoque y capacidad de liderar en medio del cambio.',
+    note: 'Formación humana para restaurar seguridad, enfoque y capacidad de liderar en medio del cambio.',
     tone: 'mission-pillar--gray',
   },
   {
     title: 'Apoyo espiritual para fortalecer desde adentro',
-    note: 'Espacios de sentido, escucha y fe para sostener la reconstruccion personal y familiar.',
+    note: 'Espacios de sentido, escucha y fe para sostener la reconstrucción personal y familiar.',
     tone: 'mission-pillar--sunset',
   },
 ]
 
 const historyMoments = [
-  'Perdida, fe y reconstruccion como origen',
-  '10 anos acompanando procesos reales',
-  'Emprendimiento con proposito y bienestar',
+  'Pérdida, fe y reconstrucción como origen',
+  '10 años acompañando procesos reales',
+  'Emprendimiento con propósito y bienestar',
 ]
 
 const impactStats: ImpactStat[] = [
@@ -199,7 +200,7 @@ const impactStats: ImpactStat[] = [
   },
   {
     value: 10,
-    label: 'Anos transformando vidas y culturas',
+    label: 'Años transformando vidas y culturas',
     icon: FiCalendar,
   },
 ]
@@ -209,7 +210,7 @@ const testimonials: Testimonial[] = [
     name: 'Diana Galindo',
     role: 'Emprendedora graduada',
     quote:
-      'Recupere mi confianza y convierti mi experiencia en una idea que hoy sostiene a mi familia.',
+      'Recuperé mi confianza y convertí mi experiencia en una idea que hoy sostiene a mi familia.',
     tone: 'testimonial-card--purple',
     initials: 'DG',
   },
@@ -217,7 +218,7 @@ const testimonials: Testimonial[] = [
     name: 'Nelly Pantoja',
     role: 'Participante EDIFICA',
     quote:
-      'Aqui no solo me ensenaron a emprender, tambien me devolvieron claridad, disciplina y esperanza.',
+      'Aquí no solo me enseñaron a emprender, también me devolvieron claridad, disciplina y esperanza.',
     tone: 'testimonial-card--pink',
     initials: 'NP',
   },
@@ -225,7 +226,7 @@ const testimonials: Testimonial[] = [
     name: 'Kelly Diaz',
     role: 'Aliada de comunidad',
     quote:
-      'El acompanamiento humano fue la diferencia para pasar del miedo a tomar accion con proposito.',
+      'El acompañamiento humano fue la diferencia para pasar del miedo a tomar acción con propósito.',
     tone: 'testimonial-card--orange',
     initials: 'KD',
   },
@@ -233,7 +234,7 @@ const testimonials: Testimonial[] = [
     name: 'Martha Cuellar',
     role: 'Lider de hogar',
     quote:
-      'Volvi a confiar en mi proceso y encontre una comunidad que me acompano sin juzgarme.',
+      'Volví a confiar en mi proceso y encontré una comunidad que me acompañó sin juzgarme.',
     tone: 'testimonial-card--purple',
     initials: 'MC',
   },
@@ -249,7 +250,7 @@ const testimonials: Testimonial[] = [
     name: 'Luisa Pardo',
     role: 'Emprendedora EDIFICA',
     quote:
-      'Lo mas valioso fue entender que mi historia no era el final, sino el punto de partida.',
+      'Lo más valioso fue entender que mi historia no era el final, sino el punto de partida.',
     tone: 'testimonial-card--orange',
     initials: 'LP',
   },
@@ -955,6 +956,7 @@ function Home({ country }: HomeProps) {
         title={country.shortNav ? `Solicitud en ${country.name}` : 'Solicitud en Colombia'}
         subtitle="Completa el formulario y nuestro equipo te respondera desde este mismo pais."
       />
+      <ChatbotEmbed />
     </div>
   )
 }

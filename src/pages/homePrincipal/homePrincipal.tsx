@@ -31,19 +31,19 @@ import logoBlanco from '../../assets/Logo Blanco.png'
 import './homePrincipal.css'
 
 const navItems = [
-  { label: 'QUIENES SOMOS', href: '#quienes-somos' },
+  { label: 'QUIÉNES SOMOS', href: '#quienes-somos' },
   { label: 'NUESTRO IMPACTO', href: '#nuestro-impacto' },
   { label: 'EQUIPO', href: '#equipo' },
   { label: 'NOTICIAS', href: '#noticias' },
-  { label: 'COMO APOYAR', href: '#como-apoyar' },
-  { label: 'CONTACTENOS', href: '#contactenos' },
+  { label: 'CÓMO APOYAR', href: '#como-apoyar' },
+  { label: 'CONTÁCTENOS', href: '#contactenos' },
   { label: 'TU AULA', href: '#/home' },
 ]
 
 const countryLinks = [
   { label: 'Colombia Comparte', image: colombiaLogo, href: '#/home', featured: false },
   { label: 'Ecuador Comparte', image: ecuadorLogo, href: '#/pais/ecuador', featured: false },
-  { label: 'Latinoamerica Comparte', image: latinoamericaLogo, href: '#top', featured: true },
+  { label: 'Latinoamérica Comparte', image: latinoamericaLogo, href: '#top', featured: true },
   { label: 'Chile Comparte', image: chileLogo, href: '#/pais/chile', featured: false },
   { label: 'Argentina Comparte', image: argentinaLogo, href: '#/pais/argentina', featured: false },
 ]
@@ -52,7 +52,7 @@ const impactStats = [
   {
     value: 10,
     suffix: '',
-    label: 'anos de impacto social y empresarial',
+    label: 'años de impacto social y empresarial',
     icon: FaCircleCheck,
   },
   {
@@ -87,7 +87,7 @@ const partnerLogos = [
 const teamMembers = [
   {
     name: 'Carolina Ruiz',
-    role: 'Cofundadora y CEO para Latinoamerica Comparte',
+    role: 'Cofundadora y CEO para Latinoamérica Comparte',
     accent: 'team-card__media--purple',
     initials: 'CR',
   },
@@ -105,7 +105,7 @@ const teamMembers = [
   },
   {
     name: 'Paola Rodriguez',
-    role: 'Lider de programas y comunidad',
+    role: 'Líder de programas y comunidad',
     accent: 'team-card__media--rose',
     initials: 'PR',
   },
@@ -117,7 +117,7 @@ const teamMembers = [
   },
   {
     name: 'Juan Pablo Gomez',
-    role: 'Director de expansion y estrategia',
+    role: 'Director de expansión y estrategia',
     accent: 'team-card__media--mint',
     initials: 'JG',
   },
@@ -129,7 +129,7 @@ const teamMembers = [
   },
   {
     name: 'Catalina Mesa',
-    role: 'Lider de comunicaciones y red',
+    role: 'Líder de comunicaciones y red',
     accent: 'team-card__media--peach',
     initials: 'CM',
   },
@@ -144,19 +144,19 @@ const teamMembers = [
 const newsItems = [
   {
     title: 'Historias que inspiran',
-    description: 'Casos de exito y emprendedores que transforman sus comunidades.',
+    description: 'Casos de éxito y emprendedores que transforman sus comunidades.',
     tag: 'INSPIRACION',
     accent: 'news-card__visual--purple',
   },
   {
     title: 'Noticias corporativas',
-    description: 'Nuevas alianzas y expansion regional.',
+    description: 'Nuevas alianzas y expansión regional.',
     tag: 'CORPORATIVO',
     accent: 'news-card__visual--pink',
   },
   {
     title: 'Eventos y conferencias',
-    description: 'Red que transforma y espacios de encuentro en la region.',
+    description: 'Red que transforma y espacios de encuentro en la región.',
     tag: 'EVENTOS',
     accent: 'news-card__visual--blue',
   },
@@ -328,7 +328,7 @@ function HomePrincipal() {
     setContactStatusTone('')
 
     if (!contactForm.pais_id) {
-      setContactStatusMessage('Selecciona el pais para registrar la solicitud.')
+      setContactStatusMessage('Selecciona el país para registrar la solicitud.')
       setContactStatusTone('error')
       setIsContactSaving(false)
       return
@@ -367,7 +367,7 @@ function HomePrincipal() {
   return (
     <div className="home-principal" id="top">
       <header className="home-principal__header">
-        <a className="home-principal__brand" href="#top" aria-label="Latinoamerica Comparte">
+        <a className="home-principal__brand" href="#top" aria-label="Latinoamérica Comparte">
           <img src={logoBlanco} alt="" />
         </a>
 
@@ -394,8 +394,8 @@ function HomePrincipal() {
           <div className="home-principal__overlay" />
 
           <div className="home-principal__hero-content">
-            <h1>UN PROPOSITO QUE NACIO DE COLOMBIA</h1>
-            <p className="home-principal__hero-subtitle">HOY INSPIRA A TODA LATINOAMERICA</p>
+            <h1>UN PROPÓSITO QUE NACIÓ DE COLOMBIA</h1>
+            <p className="home-principal__hero-subtitle">HOY INSPIRA A TODA LATINOAMÉRICA</p>
 
             <div className="home-principal__countries" aria-label="Red latinoamericana">
               {countryLinks.map((item) => (
@@ -414,11 +414,11 @@ function HomePrincipal() {
 
             <p className="home-principal__hero-copy">
               Una red que une personas, empresas y comunidades, para construir una
-              region mas humana, productiva y consciente.
+              región más humana, productiva y consciente.
             </p>
 
             <a className="home-principal__cta" href="#nuestro-impacto">
-              Conoce mas
+              Conoce más
             </a>
           </div>
         </section>
@@ -431,24 +431,24 @@ function HomePrincipal() {
           }}
         >
           <div className="about-section-homeprincipal__inner">
-            <h2>QUIENES SOMOS</h2>
+            <h2>QUIÉNES SOMOS</h2>
 
             <div className="about-section-homeprincipal__card">
               <div className="about-section-homeprincipal__badge">
-                <img src={latinoamericaLogo} alt="Latinoamerica Comparte" />
+                <img src={latinoamericaLogo} alt="Latinoamérica Comparte" />
               </div>
 
               <div className="about-section-homeprincipal__content">
                 <p>
-                  En Latinoamerica Comparte creemos que transformar personas es
+                  En Latinoamérica Comparte creemos que transformar personas es
                   transformar empresas.
                 </p>
-                <p>Nacimos de una historia real de perdida, fe y proposito.</p>
+                <p>Nacimos de una historia real de pérdida, fe y propósito.</p>
                 <p>
-                  Lo que comenzo en Colombia como un movimiento para ayudar a
+                  Lo que comenzó en Colombia como un movimiento para ayudar a
                   familias a reconstruir su productividad, hoy se ha convertido en
                   una red continental que promueve el bienestar, la cultura
-                  organizacional y el emprendimiento con proposito.
+                  organizacional y el emprendimiento con propósito.
                 </p>
                 <p>
                   En cada país acompañamos a personas, familias y empresas a
@@ -502,7 +502,7 @@ function HomePrincipal() {
               <h3>Empresas que comparten</h3>
               <p>
                 Las empresas que creen en el bienestar y la productividad con
-                proposito hacen parte de esta red.
+                propósito hacen parte de esta red.
               </p>
 
               <div className="partner-marquee">
@@ -522,8 +522,8 @@ function HomePrincipal() {
           <div className="team-section__header">
             <h2>NUESTRO EQUIPO</h2>
             <p>
-              El corazon de Latinoamerica Comparte esta en las personas que dia a
-              dia trabajan por transformar vidas.
+              El corazón de Latinoamérica Comparte está en las personas que día a
+              día trabajan por transformar vidas.
             </p>
 
             <button
@@ -573,7 +573,7 @@ function HomePrincipal() {
         <section className="news-section-homeprincipal" id="noticias">
           <div className="news-section-homeprincipal__header">
             <h2>NOTICIAS</h2>
-            <p>Mantente al dia con nuestras ultimas novedades y casos de exito.</p>
+            <p>Mantente al día con nuestras últimas novedades y casos de éxito.</p>
           </div>
 
           <div className="news-section-homeprincipal__grid">
@@ -596,7 +596,7 @@ function HomePrincipal() {
                 <div className="news-card-homeprincipal__body">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
-                  <a href={item.href}>Leer mas</a>
+                  <a href={item.href}>Leer más</a>
                 </div>
               </article>
             ))}
@@ -605,8 +605,8 @@ function HomePrincipal() {
 
         <section className="support-section-homeprincipal" id="como-apoyar">
           <div className="support-section-homeprincipal__header">
-            <h2>COMO APOYAR</h2>
-            <p>Sumate a una red que transforma desde el proposito.</p>
+            <h2>CÓMO APOYAR</h2>
+            <p>Súmate a una red que transforma desde el propósito.</p>
           </div>
 
           <div className="support-section-homeprincipal__grid">
@@ -616,7 +616,7 @@ function HomePrincipal() {
               </div>
               <h3>Empresas Aliadas</h3>
               <p>
-                Vincula tu compania a nuestros programas e impulsa el bienestar de
+                Vincula tu compañía a nuestros programas e impulsa el bienestar de
                 tus colaboradores.
               </p>
               <button
@@ -624,7 +624,7 @@ function HomePrincipal() {
                 className="support-card-homeprincipal__button"
                 onClick={() => setIsRequestModalOpen(true)}
               >
-                Mas informacion
+                Más información
               </button>
             </article>
 
@@ -635,7 +635,7 @@ function HomePrincipal() {
               </div>
               <h3>Donaciones Individuales</h3>
               <p>
-                Tu aporte ayuda a mas personas a recuperar su productividad y
+                Tu aporte ayuda a más personas a recuperar su productividad y
                 esperanza.
               </p>
 
@@ -670,7 +670,7 @@ function HomePrincipal() {
                 Donar con tarjeta
               </button>
               <p className="support-card-homeprincipal__note">
-                Tambien aceptamos tarjetas de credito y debito
+                También aceptamos tarjetas de crédito y débito
               </p>
             </article>
           </div>
@@ -678,8 +678,8 @@ function HomePrincipal() {
 
         <section className="contact-section-homeprincipal" id="contactenos">
           <div className="contact-section-homeprincipal__header">
-            <h2>CONTACTANOS</h2>
-            <p>Pronto uno de nuestros gerentes regionales se pondra en contacto contigo.</p>
+            <h2>CONTÁCTANOS</h2>
+            <p>Pronto uno de nuestros gerentes regionales se pondrá en contacto contigo.</p>
           </div>
 
           <form className="contact-form-homeprincipal" onSubmit={handleContactSubmit}>
@@ -697,7 +697,7 @@ function HomePrincipal() {
               </label>
 
               <label className="contact-form-homeprincipal__field">
-                <span>Telefono *</span>
+                <span>Teléfono *</span>
                 <input
                   type="tel"
                   name="telefono"
@@ -742,7 +742,7 @@ function HomePrincipal() {
             </div>
 
             <label className="contact-form-homeprincipal__field">
-              <span>Correo electronico *</span>
+              <span>Correo electrónico *</span>
               <input
                 type="email"
                 name="correo"
@@ -755,9 +755,9 @@ function HomePrincipal() {
 
             <label className="contact-form-homeprincipal__field">
               <span>Mensaje</span>
-              <textarea
+                <textarea
                 name="mensaje"
-                placeholder="Cuentanos como podemos ayudarte..."
+                placeholder="Cuéntanos cómo podemos ayudarte..."
                 rows={6}
                 value={contactForm.mensaje}
                 onChange={handleContactFieldChange}
@@ -786,22 +786,22 @@ function HomePrincipal() {
       <footer className="homeprincipal-footer">
         <div className="homeprincipal-footer__inner">
           <div className="homeprincipal-footer__brand">
-            <img src={latinoamericaLogo} alt="Latinoamerica Comparte" />
+            <img src={latinoamericaLogo} alt="Latinoamérica Comparte" />
             <p>"Cuando un país comparte, Latinoamérica avanza."</p>
           </div>
 
           <div className="homeprincipal-footer__links">
-            <h3>Enlaces rapidos</h3>
+            <h3>Enlaces rápidos</h3>
             <a href="#top">Inicio</a>
             <a href="#nuestro-impacto">Impacto</a>
             <a href="#equipo">Equipo</a>
             <a href="#noticias">Noticias</a>
-            <a href="#como-apoyar">Como apoyar</a>
-            <a href="#contactenos">Contactanos</a>
+            <a href="#como-apoyar">Cómo apoyar</a>
+            <a href="#contactenos">Contáctanos</a>
           </div>
 
           <div className="homeprincipal-footer__socials">
-            <h3>Siguenos</h3>
+            <h3>Síguenos</h3>
             <div className="homeprincipal-footer__social-row">
               {socialLinks.map((item) => {
                 const Icon = item.icon
@@ -827,8 +827,8 @@ function HomePrincipal() {
       <PublicRequestModal
         isOpen={isRequestModalOpen}
         onClose={() => setIsRequestModalOpen(false)}
-        title="Solicitud para Latinoamerica Comparte"
-        subtitle="Completa el formulario y direccionaremos tu solicitud al pais o equipo regional correspondiente."
+        title="Solicitud para Latinoamérica Comparte"
+        subtitle="Completa el formulario y direccionaremos tu solicitud al país o equipo regional correspondiente."
       />
     </div>
   )

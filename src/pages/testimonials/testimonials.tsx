@@ -120,7 +120,7 @@ const testimonialItems: TestimonialItem[] = [
     name: 'Diana Galindo',
     role: 'Emprendedora graduada',
     quote:
-      'Recupere mi confianza y converti mi experiencia en una idea que hoy sostiene a mi familia.',
+      'Recuperé mi confianza y convertí mi experiencia en una idea que hoy sostiene a mi familia.',
     accent: 'testimonials-page-card--purple',
     initials: 'DG',
     image: '',
@@ -130,7 +130,7 @@ const testimonialItems: TestimonialItem[] = [
     name: 'Nelly Pantoja',
     role: 'Participante EDIFICA',
     quote:
-      'Aqui no solo me ensenaron a emprender, tambien me devolvieron claridad, disciplina y esperanza.',
+      'Aquí no solo me enseñaron a emprender, también me devolvieron claridad, disciplina y esperanza.',
     accent: 'testimonials-page-card--pink',
     initials: 'NP',
     image: '',
@@ -148,9 +148,9 @@ const testimonialItems: TestimonialItem[] = [
   },
   {
     name: 'Martha Cuellar',
-    role: 'Lider de hogar',
+    role: 'Líder de hogar',
     quote:
-      'Volvi a confiar en mi proceso y encontre una comunidad que me acompano sin juzgarme.',
+      'Volví a confiar en mi proceso y encontré una comunidad que me acompañó sin juzgarme.',
     accent: 'testimonials-page-card--orange',
     initials: 'MC',
     image: '',
@@ -266,7 +266,7 @@ function Testimonials({ country }: TestimonialsProps) {
             </h1>
             <p className="testimonials-page__hero-copy">
               Historias reales de personas, familias y aliados que han vivido la
-              transformacion de {country.brandName}.
+              transformación de {country.brandName}.
             </p>
           </div>
         </section>
@@ -274,12 +274,12 @@ function Testimonials({ country }: TestimonialsProps) {
         <section className="testimonials-page__content">
           <div className="testimonials-page__intro">
             <p>
-              Cada testimonio refleja una experiencia de reconstruccion,
-              crecimiento y proposito compartido.
+              Cada testimonio refleja una experiencia de reconstrucción,
+              crecimiento y propósito compartido.
             </p>
             {isLoading ? <small>Cargando testimonios del portal...</small> : null}
             {!isLoading && hasError ? (
-              <small>Mostramos testimonios de referencia mientras se restablece la conexion.</small>
+              <small>Mostramos testimonios de referencia mientras se restablece la conexión.</small>
             ) : null}
           </div>
 
@@ -314,7 +314,7 @@ function Testimonials({ country }: TestimonialsProps) {
                         className="testimonials-page-card__action"
                         onClick={() => toggleCard(index)}
                       >
-                        LEER MAS
+                        LEER MÁS
                       </button>
                     </div>
                   </div>

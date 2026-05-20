@@ -32,6 +32,7 @@ type NavbarTwoProps = {
     | 'testimonios'
     | 'solicitudes'
     | 'auditoria'
+    | 'chatbot'
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -62,7 +63,7 @@ function NavbarTwo({
     },
     {
       id: 'paises',
-      label: 'Paises',
+      label: 'Países',
       href: '#/panel/paises',
       icon: HiOutlineGlobeAmericas,
       visible: canSeeUsers,
@@ -93,6 +94,13 @@ function NavbarTwo({
       label: 'Auditoría',
       href: '#/panel/auditoria',
       icon: HiOutlineClipboardDocumentList,
+      visible: normalizedRole === 'superadmin' || normalizedRole === 'admin_pais',
+    },
+    {
+      id: 'chatbot',
+      label: 'Chatbot',
+      href: '#/panel/chatbot',
+      icon: HiOutlineChatBubbleLeftRight,
       visible: normalizedRole === 'superadmin' || normalizedRole === 'admin_pais',
     },
   ] as const
@@ -131,7 +139,7 @@ function NavbarTwo({
   return (
     <aside
       className={`navbar-two ${collapsed ? 'navbar-two--collapsed' : ''}`}
-      aria-label="Navegacion del dashboard"
+      aria-label="Navegación del dashboard"
     >
       <div className="navbar-two__topbar">
         <button

@@ -40,8 +40,8 @@ function Footer({ country, onOpenRequestModal }: FooterProps) {
     : [
         [
           { label: 'Inicio', href: `${country.homePath}#inicio` },
-          { label: 'Quienes somos', href: `${country.homePath}#sobre-nosotros` },
-          { label: 'Programa edifica', href: `${country.homePath}#programas` },
+          { label: 'Quiénes somos', href: `${country.homePath}#sobre-nosotros` },
+          { label: 'Programa EDIFICA', href: `${country.homePath}#programas` },
           { label: 'Shows y conferencias', href: `${country.homePath}#mision` },
           { label: 'Blog', href: `${country.homePath}#actualidad` },
         ],
@@ -108,7 +108,7 @@ function Footer({ country, onOpenRequestModal }: FooterProps) {
           </div>
 
           <div className="footer__contact">
-            <h2 className="footer__heading">Contactanos</h2>
+            <h2 className="footer__heading">Contáctanos</h2>
             <ul className="footer__contact-list">
               {contactItems.map((item) => (
                 <li key={item.text}>

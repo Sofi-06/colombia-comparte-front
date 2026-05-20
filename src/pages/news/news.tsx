@@ -14,9 +14,9 @@ const newsItems = [
   {
     title: 'Nuevos speakers se unen a nuestro portafolio de conferencistas',
     excerpt:
-      'Nos complace anunciar la incorporacion de dos destacados profesionales a nuestro portafolio de conferencistas.',
+      'Nos complace anunciar la incorporación de dos destacados profesionales a nuestro portafolio de conferencistas.',
     content:
-      'Nos complace anunciar la incorporacion de dos destacados profesionales a nuestro portafolio de conferencistas.',
+      'Nos complace anunciar la incorporación de dos destacados profesionales a nuestro portafolio de conferencistas.',
     date: '22 FEB',
     visual: 'news-page-card__visual--photo',
     image: '',
@@ -34,19 +34,19 @@ const newsItems = [
   {
     title: 'La increible historia de los ricos pobres',
     excerpt:
-      'La Fundacion Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran como volver a levantarse.',
+      'La Fundación Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran cómo volver a levantarse.',
     content:
-      'La Fundacion Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran como volver a levantarse.',
+      'La Fundación Colombia Comparte atiende a las familias que lo tuvieron todo y hoy no encuentran cómo volver a levantarse.',
     date: '04 MAY',
     visual: 'news-page-card__visual--radio',
     image: '',
   },
   {
-    title: 'Pobreza oculta e hipoteca inversa, por que estan relacionados',
+    title: 'Pobreza oculta e hipoteca inversa, por qué están relacionados',
     excerpt:
-      'El Gobierno acabo de reglamentar el polemico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
+      'El Gobierno acabó de reglamentar el polémico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
     content:
-      'El Gobierno acabo de reglamentar el polemico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
+      'El Gobierno acabó de reglamentar el polémico mecanismo de la hipoteca inversa. Exploramos su impacto en los hogares.',
     date: '03 MAY',
     visual: 'news-page-card__visual--city',
     image: '',

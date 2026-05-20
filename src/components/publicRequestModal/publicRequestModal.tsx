@@ -50,8 +50,8 @@ function PublicRequestModal({
   onClose,
   initialCountrySlug = null,
   initialPurpose = 'Servicio',
-  title = 'Solicitud de informacion',
-  subtitle = 'Comparte tus datos y nuestro equipo te contactara sin salir de esta pagina.',
+  title = 'Solicitud de información',
+  subtitle = 'Comparte tus datos y nuestro equipo te contactará sin salir de esta página.',
 }: PublicRequestModalProps) {
   const defaultCountryId = initialCountrySlug ? String(countryConfigs[initialCountrySlug].id) : ''
   const initialCountryName = initialCountrySlug ? countryConfigs[initialCountrySlug].name : ''
@@ -123,7 +123,7 @@ function PublicRequestModal({
     setStatusTone('')
 
     if (!form.pais_id) {
-      setStatusMessage('Selecciona el pais para registrar la solicitud.')
+      setStatusMessage('Selecciona el país para registrar la solicitud.')
       setStatusTone('error')
       setIsSaving(false)
       return
@@ -204,7 +204,7 @@ function PublicRequestModal({
 
           {showCountrySelect ? (
             <label className="public-request-modal__field">
-              <span>Pais</span>
+              <span>País</span>
               <div className="public-request-modal__control public-request-modal__control--select">
                 <HiOutlineGlobeAlt aria-hidden="true" />
                 <select
@@ -213,7 +213,7 @@ function PublicRequestModal({
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="">Selecciona un pais</option>
+                  <option value="">Selecciona un país</option>
                   {publicCountryOptions.map((country) => (
                     <option key={country.slug} value={country.id}>
                       {country.nombre}
@@ -228,7 +228,7 @@ function PublicRequestModal({
             </label>
           ) : (
             <label className="public-request-modal__field">
-              <span>Pais</span>
+              <span>País</span>
               <div className="public-request-modal__control public-request-modal__control--locked">
                 <HiOutlineGlobeAlt aria-hidden="true" />
                 <input type="text" value={countryLabel} readOnly />
@@ -252,7 +252,7 @@ function PublicRequestModal({
           </label>
 
           <label className="public-request-modal__field">
-            <span>Telefono</span>
+              <span>Teléfono</span>
             <div className="public-request-modal__control">
               <HiOutlinePhone aria-hidden="true" />
               <input
@@ -295,7 +295,7 @@ function PublicRequestModal({
               <HiOutlineDocumentText aria-hidden="true" />
               <textarea
                 name="mensaje"
-                placeholder="Cuentanos como podemos ayudarte"
+                placeholder="Cuéntanos cómo podemos ayudarte"
                 value={form.mensaje}
                 onChange={handleInputChange}
                 rows={5}
