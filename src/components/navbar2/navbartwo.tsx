@@ -94,7 +94,7 @@ function NavbarTwo({
       label: 'Auditoría',
       href: '#/panel/auditoria',
       icon: HiOutlineClipboardDocumentList,
-      visible: normalizedRole === 'superadmin' || normalizedRole === 'admin_pais',
+      visible: normalizedRole === 'superadmin',
     },
     {
       id: 'chatbot',
