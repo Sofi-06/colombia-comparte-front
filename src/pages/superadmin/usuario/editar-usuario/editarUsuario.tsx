@@ -27,6 +27,7 @@ type FormState = {
   username: string
   password: string
   rol_id: string
+  pais_id: string
   pregunta_seguridad: string
   respuesta_seguridad: string
 }
@@ -114,7 +115,7 @@ function EditarUsuarioPage() {
           password: '',
           rol_id: getRoleValueFromRecord(selectedUser.rol_id, selectedUser.rol),
           pais_id: selectedUser.pais_id != null ? String(selectedUser.pais_id) : '',
-          pregunta_seguridad: selectedUser.pregunta_seguridad ?? '',
+          pregunta_seguridad: (selectedUser as unknown as { pregunta_seguridad?: string })?.pregunta_seguridad ?? '',
           respuesta_seguridad: '',
         })
       } catch (error) {

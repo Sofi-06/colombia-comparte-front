@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { getMetrics, type MetricsRecord } from '../../services/metrics'
 import './metrics.css'
 import {
@@ -9,7 +10,7 @@ import {
   HiOutlineDocumentText,
 } from 'react-icons/hi2'
 
-const METRIC_ITEMS: { key: keyof MetricsRecord; title: string; icon: JSX.Element }[] = [
+const METRIC_ITEMS: { key: keyof MetricsRecord; title: string; icon: ReactNode }[] = [
   { key: 'users', title: 'Usuarios', icon: <HiOutlineUserGroup /> },
   { key: 'news', title: 'Noticias (tot)', icon: <HiOutlineNewspaper /> },
   { key: 'news_published', title: 'Noticias (public.)', icon: <HiOutlineNewspaper /> },
@@ -18,7 +19,7 @@ const METRIC_ITEMS: { key: keyof MetricsRecord; title: string; icon: JSX.Element
   { key: 'requests_pending', title: 'Solicitudes (pend.)', icon: <HiOutlineDocumentText /> },
 ]
 
-function MetricCard(props: Readonly<{ title: string; value: number; icon: string; variant: number }>) {
+function MetricCard(props: Readonly<{ title: string; value: number; icon: ReactNode; variant: number }>) {
   return (
     <div className={`metrics-card metrics-card--${props.variant}`}>
       <div className="metrics-card__media">{props.icon}</div>
