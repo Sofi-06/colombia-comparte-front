@@ -1,4 +1,4 @@
-const COUNTRIES_API_BASE_URL = 'http://localhost:3001/api/countries'
+const COUNTRIES_API_BASE_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/countries'
 
 export type CountryRecord = {
   id: number

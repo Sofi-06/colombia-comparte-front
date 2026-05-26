@@ -1,7 +1,7 @@
 import { getStoredAuthUser, isSuperadmin } from './auth'
 
-const ADMIN_TESTIMONIALS_API_URL = 'http://localhost:3001/api/testimonials'
-const PUBLIC_TESTIMONIALS_API_URL = 'http://localhost:3001/api/testimonials/public'
+const ADMIN_TESTIMONIALS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/testimonials'
+const PUBLIC_TESTIMONIALS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/testimonials/public'
 
 export type TestimonialRecord = {
   id?: number | string

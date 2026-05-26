@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3001/api/metrics'
+const API_BASE = 'https://colombia-comparte-back-ssi8.onrender.com/api/metrics'
 
 function getAuthHeaders() {
   const token = globalThis.localStorage.getItem('authToken')

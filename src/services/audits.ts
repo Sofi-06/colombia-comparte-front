@@ -1,4 +1,4 @@
-const AUDITS_API_URL = 'http://localhost:3001/api/audits'
+const AUDITS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/audits'
 
 type AuditRecord = {
   id?: number | string

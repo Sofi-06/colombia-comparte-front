@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001/api/users'
+const API_BASE_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/users'
 
 export type UserRecord = {
   id?: number | string

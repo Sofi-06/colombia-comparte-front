@@ -33,7 +33,7 @@ export type AuthUser = {
 }
 
 const DASHBOARD_COUNTRY_STORAGE_KEY = 'dashboardCountry'
-const AUTH_API_BASE_URL = 'http://localhost:3001/api/auth'
+const AUTH_API_BASE_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/auth'
 
 function toRecord(value: unknown) {
   return value && typeof value === 'object' && !Array.isArray(value)

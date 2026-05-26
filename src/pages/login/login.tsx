@@ -14,7 +14,7 @@ import botIllustration from '../../assets/bot.svg'
 import logoLatinoamerica from '../../assets/Latinoamérica Co N.png'
 import './login.css'
 
-const LOGIN_URL = 'http://localhost:3001/api/auth/login'
+const LOGIN_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/auth/login'
 
 function getDashboardRouteByRole(role: string) {
   const normalizedRole = role.trim().toLowerCase()

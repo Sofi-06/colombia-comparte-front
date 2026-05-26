@@ -1,6 +1,6 @@
 import { getStoredAuthUser, isSuperadmin } from './auth'
 
-const CONTACT_REQUESTS_API_URL = 'http://localhost:3001/api/contact-requests'
+const CONTACT_REQUESTS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/contact-requests'
 
 export type ContactRequestStatus =
   | 'pendiente'

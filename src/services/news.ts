@@ -1,7 +1,7 @@
 import { getStoredAuthUser, isSuperadmin } from './auth'
 
-const ADMIN_NEWS_API_URL = 'http://localhost:3001/api/news'
-const PUBLIC_NEWS_API_URL = 'http://localhost:3001/api/news/public'
+const ADMIN_NEWS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/news'
+const PUBLIC_NEWS_API_URL = 'https://colombia-comparte-back-ssi8.onrender.com/api/news/public'
 
 export type NewsRecord = {
   id?: number | string
