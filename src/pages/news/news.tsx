@@ -222,7 +222,9 @@ function News({ country }: NewsProps) {
                     <div className="news-page-card__body">
                       <p className="news-page-card__meta">{country.brandName}</p>
                       <h2 className="news-page-card__title">{item.title}</h2>
-                      <p className="news-page-card__excerpt">{item.excerpt}</p>
+                      <div className="news-page-card__excerpt-scroll">
+                        <p className="news-page-card__excerpt">{item.excerpt}</p>
+                      </div>
                       <button
                         type="button"
                         className="news-page-card__link"
